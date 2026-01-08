@@ -3,6 +3,13 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# CAE - Python
+## Ignorer les fichiers de log d'exceptions
+*.exception
+
+## Ignorer les fichiers .rec
+*.rec
+
 # C extensions
 *.so
 
