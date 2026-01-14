@@ -1,3 +1,8 @@
+from abaqus import *
+from abaqusConstants import *
+from caeModules import *
+
+
 def apply_tabular_surface_traction(
         model,
         surfaceName,

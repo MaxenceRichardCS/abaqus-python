@@ -3,7 +3,7 @@
 <Warning><message type="string">355 elements are distorted. Either the isoparametric angles are out of the suggested limits or the triangular or tetrahedral quality measure is bad. The elements have been identified in element set WarnElemDistorted.</message><phase type="symconst">BATCHPRE_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Warning>
 <Odb_File><file type="string">C:\Users\diane\OneDrive - CentraleSupelec\Travail\jean muller\abaqus-python\principal\Job-GBS-Tower.odb</file><phase type="symconst">BATCHPRE_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Odb_File>
 <Completed><message type="string">Analysis phase complete</message><phase type="symconst">BATCHPRE_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Completed>
-<Started><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName><clientHost type="string">Di</clientHost><handle type="integer">36352</handle></Started>
+<Started><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName><clientHost type="string">Di</clientHost><handle type="integer">28480</handle></Started>
 <Step><stepId type="integer">1</stepId><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Step>
 <Odb_Frame><step type="integer">0</step><frame type="integer">0</frame><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Odb_Frame>
 <Warning><message type="string">THERE ARE 2 UNCONNECTED REGIONS IN THE MODEL.</message><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Warning>
@@ -112,4 +112,4 @@
 <Status><step type="integer">1</step><increment type="integer">50</increment><attempts type="integer">1</attempts><severe type="integer">0</severe><equilibrium type="integer">1</equilibrium><iterations type="integer">1</iterations><totalTime type="float">4</totalTime><stepTime type="float">4</stepTime><timeIncrement type="float">0.0799999999999979</timeIncrement><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Status>
 <End_Step><stepId type="integer">1</stepId><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></End_Step>
 <Completed><message type="string">Analysis phase complete</message><phase type="symconst">STANDARD_PHASE</phase><jobName type="string">Job-GBS-Tower</jobName></Completed>
-<JOB_COMPLETED><time type="string">Tue Jan 13 22:25:20 2026</time><jobName type="string">Job-GBS-Tower</jobName></JOB_COMPLETED></msgwrapper>
+<JOB_COMPLETED><time type="string">Wed Jan 14 11:28:29 2026</time><jobName type="string">Job-GBS-Tower</jobName></JOB_COMPLETED></msgwrapper>

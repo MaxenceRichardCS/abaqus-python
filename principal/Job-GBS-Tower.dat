@@ -1,6 +1,6 @@
 1
 
-   Abaqus Learning Edition 2025                                  Date 13-janv.-2026   Time 22:25:10
+   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 11:28:08
    
 
 
@@ -34,22 +34,22 @@
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
   *kinematic
 
  ***NOTE: WHENEVER A TRANSLATION (ROTATION) DOF AT A NODE IS CONSTRAINED BY A 
           KINEMATIC COUPLING DEFINITION THE TRANSLATION (ROTATION) DOFS FOR 
           THAT NODE CANNOT BE INCLUDED IN ANY OTHER CONSTRAINT INCLUDING MPCS, 
           RIGID BODIES, ETC.
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
   *boundary
   *boundary
   *boundary
@@ -57,7 +57,7 @@
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
   *output, field, variable=PRESELECT
   *output, history, variable=PRESELECT
   *output, field, variable=PRESELECT
@@ -513,13 +513,13 @@
 
 
      JOB TIME SUMMARY
-       USER TIME (SEC)      =     0.40    
-       SYSTEM TIME (SEC)    =      0.0    
-       TOTAL CPU TIME (SEC) =     0.40    
-       WALLCLOCK TIME (SEC) =            0
+       USER TIME (SEC)      =      1.2    
+       SYSTEM TIME (SEC)    =     0.70    
+       TOTAL CPU TIME (SEC) =      1.9    
+       WALLCLOCK TIME (SEC) =            1
 1
 
-   Abaqus Learning Edition 2025                                  Date 13-janv.-2026   Time 22:25:11
+   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 11:28:12
    
 
      Calcul GBS et Tour                                                                        STEP    1  INCREMENT    1
@@ -589,7 +589,7 @@
 
 
      JOB TIME SUMMARY
-       USER TIME (SEC)      =      3.8    
-       SYSTEM TIME (SEC)    =     0.70    
-       TOTAL CPU TIME (SEC) =      4.5    
-       WALLCLOCK TIME (SEC) =            4
+       USER TIME (SEC)      =      17.    
+       SYSTEM TIME (SEC)    =      6.7    
+       TOTAL CPU TIME (SEC) =      24.    
+       WALLCLOCK TIME (SEC) =           11

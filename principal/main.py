@@ -85,26 +85,31 @@ gbs_part = geom.create_fused_gbs(mymodel,param_geom)
 # Création de l'Assembly 
 # =============================================================================
 
-#ici encastrement 
-dof = {
-    'ux': 0,
-    'uy': 0,
-    'uz': 0,
-    'urx': 0,
-    'ury': 0,
-    'urz': 0
-}
 
 h_gbs_top = param_geom['plateau_height'] + param_geom['cone_height'] + param_geom['cyl_height']
 
-geom.assemble_tower_gbs(
+# ---------------------------------------------------------
+# ÉTAPE 1 : GÉOMÉTRIE (On pose les pièces)
+# ---------------------------------------------------------
+inst_gbs, inst_tower = geom.create_assembly_geometry(
     mymodel,
-    tower_part,
-    gbs_part,
+    tower_part_name='Tower',
+    gbs_part_name='GBS_Fused',
     h_pipe_bottom=0.0,
-    h_gbs_top=h_gbs_top,
+    h_gbs_top=h_gbs_top
+)
+
+# ---------------------------------------------------------
+# ÉTAPE 2 : MÉCANIQUE (On crée les liens et les blocages)
+# ---------------------------------------------------------
+dof = {'ux': 0, 'uy': 0, 'uz': 0, 'urx': 0, 'ury': 0, 'urz': 0}
+
+BC.create_interaction_tower_GBS(
+    mymodel,
+    inst_tower=inst_tower,    # On passe l'objet instance créé juste au-dessus
+    h_interface=h_gbs_top,
     dof=dof,
-    step_name='Step_BC'  # step dédié pour BC non nulles
+    step_name='Step_BC'
 )
 
 # =============================================================================
@@ -218,17 +223,20 @@ force.apply_tabular_surface_traction(
 # =============================================================================
 # 6. CRÉATION ET LANCEMENT DU JOB
 # =============================================================================
-job_name = 'Job-GBS-Tower'
+def lancement_job(model):
+    job_name = 'Job-GBS-Tower'
 
-# Création du Job
-mdb.Job(name=job_name, model=mymodel, description='Calcul GBS et Tour')
+    # Création du Job
+    mdb.Job(name=job_name, model=model, description='Calcul GBS et Tour')
 
-# Soumission du Job
-print("Soumission du job {}...".format(job_name))
-mdb.jobs[job_name].submit()
+    # Soumission du Job
+    print("Soumission du job {}...".format(job_name))
+    mdb.jobs[job_name].submit()
 
-# Attente de la fin du calcul
-print("Calcul en cours...")
-mdb.jobs[job_name].waitForCompletion()
+    # Attente de la fin du calcul
+    print("Calcul en cours...")
+    mdb.jobs[job_name].waitForCompletion()
 
-print("Calcul terminé. Le fichier .odb est généré.")
+    print("Calcul terminé. Le fichier .odb est généré.")
+
+lancement_job(mymodel)

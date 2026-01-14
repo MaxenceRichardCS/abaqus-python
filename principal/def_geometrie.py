@@ -326,85 +326,37 @@ def create_fused_gbs(model, params):
 # 7. Définition de l'Assembly 
 # =============================================================================
 
-
-def assemble_tower_gbs(
-        model,
-        tower_part,
-        gbs_part,
-        h_pipe_bottom=0.0,
-        h_gbs_top=0.0,
-        dof=None,
-        step_name='Step_BC'):
+# =============================================================================
+# FONCTION 1 : GESTION DE LA GÉOMÉTRIE (INSTANCES + POSITION)
+# =============================================================================
+def create_assembly_geometry(model, tower_part_name, gbs_part_name, h_pipe_bottom, h_gbs_top):
     """
-    Assemble Tower + GBS.
-
+    Gère uniquement la mise en place des instances dans l'espace.
+    Garantit le mode dependent=ON.
     """
-    
-    # Gestion entrées
-    if isinstance(tower_part, (tuple, list)): tower_part = tower_part[0]
-    if isinstance(gbs_part, (tuple, list)): gbs_part = gbs_part[0]
-
     a = model.rootAssembly
     
-    # Nettoyage complet
+    # 1. Nettoyage complet (pour éviter les conflits si on relance)
+    # On supprime les features (RP, Couplings...) et les instances
     if hasattr(a, 'features'):
-        for f in list(a.features.keys()): del a.features[f]
+        a.deleteFeatures(a.features.keys())
     if hasattr(a, 'instances'):
         for i in list(a.instances.keys()): del a.instances[i]
 
-    # Instanciation
-    inst_gbs = a.Instance(name='GBS-1', part=gbs_part, dependent=ON)
-    inst_tower = a.Instance(name='Tower-1', part=tower_part, dependent=ON)
+    # 2. Création des instances (Le "Contrat de dépendance" est signé ici)
+    # On utilise les noms de parts (str) pour récupérer les objets parts
+    p_gbs = model.parts[gbs_part_name]
+    p_tower = model.parts[tower_part_name]
+    
+    inst_gbs = a.Instance(name='GBS-1', part=p_gbs, dependent=ON)
+    inst_tower = a.Instance(name='Tower-1', part=p_tower, dependent=ON)
 
-    # Positionnement (Translation robuste via inst.name)
+    # 3. Positionnement (Translation)
     dy = h_gbs_top - h_pipe_bottom
     a.translate(instanceList=(inst_tower.name, ), vector=(0.0, dy, 0.0))
     
-    # REGÉNÉRATION (Indispensable)
-    a.regenerate()
-
-    # Reference Point (RP)
-    a.ReferencePoint(point=(0.0, h_gbs_top, 0.0))
-    rp_obj = a.referencePoints.findAt((0.0, h_gbs_top, 0.0), )
-    rp_set = a.Set(name='RP_Interface', referencePoints=(rp_obj,))
-
-    # Surface Esclave (Tour)
-    pipe_surf = a.Surface(
-        side1Faces=inst_tower.faces[:],
-        name='Pipe_Contact_Surf'
-    )
-
-    # --- COUPLING (Retour à votre méthode originale) ---
-    model.Coupling(
-        name='Coupling_Pipe_GBS',
-        controlPoint=rp_set,
-        surface=pipe_surf,
-        influenceRadius=WHOLE_SURFACE,
-        couplingType=KINEMATIC,
-        u1=ON, u2=ON, u3=ON, ur1=ON, ur2=ON, ur3=ON
-    )
-
-    # BC & Step
-    if dof is not None:
-        if step_name not in model.steps:
-            model.StaticStep(name=step_name, previous='Initial')
-
-        bc_args = {'name': 'BC_Interface', 'createStepName': step_name, 'region': rp_set}
-        trans_map = {'ux':'u1', 'uy':'u2', 'uz':'u3'}
-        rot_map = {'urx':'ur1', 'ury':'ur2', 'urz':'ur3'}
-        
-        for k, v in trans_map.items():
-            if k in dof and dof[k] is not None: bc_args[v] = dof[k]
-        
-        deg_to_rad = pi / 180.0
-        for k, v in rot_map.items():
-            if k in dof and dof[k] is not None: bc_args[v] = dof[k] * deg_to_rad
-
-        if len(bc_args) > 3:
-            model.DisplacementBC(**bc_args)
-
-    return rp_set
-
+    print("Assemblage géométrique terminé.")
+    return inst_gbs, inst_tower
 
 # =============================================================================
 # 7. Fusion des surfaces extérieures
