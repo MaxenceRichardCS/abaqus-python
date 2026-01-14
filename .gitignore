@@ -6,6 +6,15 @@ __pycache__/
 # CAE - Python
 ## Ignorer les fichiers de log d'exceptions
 *.exception
+*.msg
+*.log
+*.odb
+*.prt
+*.sta
+*.dat
+*.env
+*.inp
+*.ipm
 
 ## Ignorer les fichiers .rec
 *.rec

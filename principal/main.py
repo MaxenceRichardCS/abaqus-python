@@ -1,3 +1,9 @@
+import def_geometrie as geom
+import def_mesh  as meshpart
+import def_mat as mat
+import def_boundaryconditions as BC
+import def_force as force
+
 # =============================================================================
 # 1. Initialisation du modèle Abaqus
 # =============================================================================
@@ -6,16 +12,8 @@ from abaqusConstants import *
 from caeModules import *
 from driverUtils import executeOnCaeStartup
 
-from math import pi
+from math import pi, sqrt
 import numpy as np
-import regionToolset
-
-import os
-import sys
-
-import def_geometrie as geom
-from def_mesh import MeshGBS, MeshTower
-
 
 # Initialise CAE (utile si on lance le script depuis l'extérieur)
 executeOnCaeStartup()
@@ -25,12 +23,6 @@ mymodel = mdb.Model(name='Model-1')
 
 # Vérification
 print("Nom du modèle créé :", mymodel.name)
-
-
-
-# current_dir = os.getcwd()
-# if current_dir not in sys.path:
-#     sys.path.append(current_dir)
 
 
 # Configuration viewport
@@ -67,13 +59,27 @@ param_geom = {
     'cyl_height': 18.0,
 }
 
+props_steel = {
+    'young': 210e9,   # 210 GPa
+    'poisson': 0.3,
+    'density': 7850.0
+}
+
+# Béton pour le GBS
+props_concrete = {
+    'young': 30e9,    # 30 GPa
+    'poisson': 0.2,
+    'density': 2400.0
+}
+
 # =============================================================================
 # Vérification des paramètres et création des deux Parts 
 # =============================================================================
 geom.check_parameters(param_geom)
+print("Check parameters ok")
 
 tower_part = geom.create_tower(mymodel, param_geom)
-GBS_part = geom.create_fused_gbs(mymodel, param_geom) 
+gbs_part = geom.create_fused_gbs(mymodel,param_geom)
 
 # =============================================================================
 # Création de l'Assembly 
@@ -82,7 +88,7 @@ GBS_part = geom.create_fused_gbs(mymodel, param_geom)
 #ici encastrement 
 dof = {
     'ux': 0,
-    'uy': None,
+    'uy': 0,
     'uz': 0,
     'urx': 0,
     'ury': 0,
@@ -91,67 +97,138 @@ dof = {
 
 h_gbs_top = param_geom['plateau_height'] + param_geom['cone_height'] + param_geom['cyl_height']
 
-geom.assemble_pipe_gbs(
+geom.assemble_tower_gbs(
     mymodel,
-    tower_part='Tower',
-    gbs_part='GBS_Fused',
+    tower_part,
+    gbs_part,
     h_pipe_bottom=0.0,
     h_gbs_top=h_gbs_top,
     dof=dof,
     step_name='Step_BC'  # step dédié pour BC non nulles
 )
 
+# =============================================================================
+# Application des BC
+# =============================================================================
 
-MeshGBS()
-MeshTower()
+BC.encastrement_GBS(mymodel)
 
-# surf = geom.get_surfaces_for_load(
-#     model=mymodel
-#     )
+# =============================================================================
+# Application des matériaux
+# =============================================================================
 
-# a = mdb.models['Model-1'].rootAssembly
-# print(a.surfaces)
+# 1. Application sur la Tour
+mat.create_and_assign_solid_material(
+    model=mymodel, 
+    part=tower_part, 
+    mat_name='Steel_S355', 
+    props=props_steel
+)
 
-# assert surf in a.surfaces.keys()
+# 2. Application sur le GBS
+mat.create_and_assign_solid_material(
+    model=mymodel, 
+    part=gbs_part, 
+    mat_name='Concrete_C50', 
+    props=props_concrete
+)
 
-def Load_Sinus_Z():
+#=============================================================================
+# Application  du Mesh
+# =============================================================================
 
-    model = mymodel
-    a = model.rootAssembly
+# 1. Application sur la Tour
+meshpart.MeshTower(tower_part)
 
-    # -------------------------------
-    # Amplitude sinusoïdale analytique
-    # -------------------------------
-    # syntaxe correcte : 5 arguments minimum
-    model.PeriodicAmplitude(
-        name='Amp_Sinus_Z',
-        createStepName='Step_BC',
-        timeSpan=STEP,
-        frequency=1.0,  # 1 cycle sur la durée du step
-        start=0.0
-    )
+# 2. Application sur le GBS
+meshpart.MeshGBS(gbs_part)
 
-    # -------------------------------
-    # Surface chargée
-    # -------------------------------
-    region = a.surfaces['Pipe_Contact_Surf']
+# =============================================================================
+# 1. INITIALISATION ET CRÉATION DES INSTANCES
+# =============================================================================
 
-    # -------------------------------
-    # Traction surfacique sinusoïdale
-    # direction = axe global ez
-    # -------------------------------
-    model.SurfaceTraction(
-        name='Load_Sinus_Z',
-        createStepName='Step_BC',
-        region=region,
-        magnitude=10.0,
-        directionVector=((0.0, 0.0, 0.0),
-                         (0.0, 0.0, 1.0)),
-        distributionType=UNIFORM,
-        traction=GENERAL,
-        amplitude='Amp_Sinus_Z'
-    )
+a = mymodel.rootAssembly
 
+# Récupération des pièces
+p_gbs = mymodel.parts['GBS_Fused']
+p_tower = mymodel.parts['Tower']
 
+# Création explicite des instances en mode DÉPENDANT (héritent du maillage des parts)
+# Il est impératif de faire cela avant de manipuler les surfaces
+if 'GBS-1' not in a.instances.keys():
+    a.Instance(name='GBS-1', part=p_gbs, dependent=ON)
 
-Load_Sinus_Z()
+if 'Tower-1' not in a.instances.keys():
+    a.Instance(name='Tower-1', part=p_tower, dependent=ON)
+
+# =============================================================================
+# 2. GESTION DES SURFACES (FUSION)
+# =============================================================================
+
+geom.fus_outer_surfaces(mymodel)
+
+# =============================================================================
+# 3. CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
+# =============================================================================
+
+# Vos données d'amplitude
+data = (
+    (0.0, 0.0),
+    (1.0, 0.5),
+    (2.0, 1.0),
+    (3.0, 0.5),
+    (4.0, 0.0)
+)
+
+# Calcul automatique de la durée et du pas de temps
+total_duration = data[-1][0]    # Prend le dernier temps (4.0)
+target_frames = 50              # On veut environ 50 images pour l'animation
+calculated_inc = total_duration / target_frames
+
+# Application des réglages au Step 'Step_BC'
+# Cela force Abaqus à découper le temps pour voir l'évolution progressive
+mymodel.steps['Step_BC'].setValues(
+    timePeriod=total_duration,
+    initialInc=calculated_inc,
+    maxInc=calculated_inc,       # Empêche le solveur de sauter des étapes
+    minInc=total_duration * 1e-5
+)
+
+# Force l'enregistrement des résultats à chaque incrément calculé
+if 'F-Output-1' in mymodel.fieldOutputRequests.keys():
+    mymodel.fieldOutputRequests['F-Output-1'].setValues(frequency=1)
+
+# =============================================================================
+# 5. APPEL DE LA FONCTION
+# =============================================================================
+
+# Définition du vecteur directeur (Point A -> Point B) pour l'axe Z
+vectez = ((0.0, 0.0, 0.0), (0.0, 0.0, 0.1))
+
+force.apply_tabular_surface_traction(
+    model=mymodel,
+    surfaceName='Global_Outer_Surface', # On appelle la surface fusionnée
+    stepName='Step_BC',
+    data=data,
+    directionVector=vectez,
+    magnitude=10.0,
+    ampName='Amp_Tabular_Z'
+)
+
+# =============================================================================
+# 6. CRÉATION ET LANCEMENT DU JOB
+# =============================================================================
+job_name = 'Job-GBS-Tower'
+
+# Création du Job
+mdb.Job(name=job_name, model=mymodel, description='Calcul GBS et Tour')
+
+# Soumission du Job
+print("Soumission du job {}...".format(job_name))
+mdb.jobs[job_name].submit()
+
+# Attente de la fin du calcul
+print("Calcul en cours...")
+mdb.jobs[job_name].waitForCompletion()
+
+print("Calcul terminé. Le fichier .odb est généré.")

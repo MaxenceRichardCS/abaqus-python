@@ -1,0 +1,595 @@
+1
+
+   Abaqus Learning Edition 2025                                  Date 13-janv.-2026   Time 22:25:10
+   
+
+
+
+     PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   *******************************************************
+
+
+     END PROCESSING PART, INSTANCE, AND ASSEMBLY INFORMATION
+   ***********************************************************
+
+
+
+
+     OPTIONS BEING PROCESSED
+   ***************************
+
+
+  *heading
+          Calcul GBS et Tour                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+  *material, name=CONCRETE_C50
+  *density
+  *elastic
+  *material, name=STEEL_S355
+  *density
+  *elastic
+  *solidsection, elset=ASSEMBLY_GBS-1_SET_MATERIAL_WHOLEPART, material=CONCRETE_C50
+  *solidsection, elset=ASSEMBLY_TOWER-1_SET_MATERIAL_WHOLEPART, material=STEEL_S355
+  *solidsection, elset=ASSEMBLY_GBS-1_SET_MATERIAL_WHOLEPART, material=CONCRETE_C50
+  *solidsection, elset=ASSEMBLY_TOWER-1_SET_MATERIAL_WHOLEPART, material=STEEL_S355
+  *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *kinematic
+
+ ***NOTE: WHENEVER A TRANSLATION (ROTATION) DOF AT A NODE IS CONSTRAINED BY A 
+          KINEMATIC COUPLING DEFINITION THE TRANSLATION (ROTATION) DOFS FOR 
+          THAT NODE CANNOT BE INCLUDED IN ANY OTHER CONSTRAINT INCLUDING MPCS, 
+          RIGID BODIES, ETC.
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_PIPE_CONTACT_SURF
+  *boundary
+  *boundary
+  *boundary
+  *boundary
+  *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_PIPE_CONTACT_SURF
+  *output, field, variable=PRESELECT
+  *output, history, variable=PRESELECT
+  *output, field, variable=PRESELECT
+  *output, history, variable=PRESELECT
+  *output, field, variable=PRESELECT
+  *output, history, variable=PRESELECT
+
+ ***NOTE: MPCS (EXTERNAL or INTERNAL, including those generated from rigid body 
+          definitions), KINEMATIC COUPLINGS, AND/OR EQUATIONS WILL ACTIVATE 
+          ADDITIONAL DEGREES OF FREEDOM
+  
+                               E L E M E N T   Q U A L I T Y  C H E C K S        
+  
+  
+ ***NOTES: DISTORTED ISOPARAMETRIC ELEMENTS: ANGLE BETWEEN ISOPARAMETRIC LINES 
+           IS LESS THAN 45 DEGREES OR GREATER THAN 135 DEGREES.
+  
+           TETRAHEDRAL QUALITY MEASURE: VOLUME OF TETRAHEDRON DIVIDED BY THE 
+           VOLUME OF EQUILATERAL TETRAHEDRON WITH SAME CIRCUMSPHERE RADIUS; 
+           0 FOR DEGENERATE TETRAHEDRON AND 1 FOR EQUILATERIAL TETRAHEDRON. IT 
+           IS RECOMMENDED THAT THE TETRAHEDRAL QUALITY MEASURE BE GREATER THAN 
+           0.02, THE MIN INTERIOR (DIHEDRAL) ANGLE BE GREATER THAN 10 DEGREES, 
+           AND THE MAX INTERIOR (DIHEDRAL) ANGLE BE LESS THAN 160 DEGREES. 
+  
+           MODIFIED TETRAHEDRAL QUALITY MEASURE: ANGLES BETWEEN THE TWO LINE 
+           SEGMENTS ON EACH EDGE; THE EDGES OF MODIFIED TETRAHEDRAL SHOULD BE 
+           AS STRAIGHT AS POSSIBLE. IT IS RECOMMENDED THAT THE ANGLE BETWEEN 
+           THE TWO LINE SEGMENTS ON EACH EDGE IS BETWEEN 160 AND 180 DEGREES. 
+  
+           TRIANGULAR QUALITY MEASURE: AREA OF TRIANGLE DIVIDED BY THE AREA OF 
+           EQUILATERAL TRIANGLE WITH SAME CIRCUMCIRCLE RADIUS; 0 FOR DEGENERATE 
+           TRIANGLE AND 1 FOR EQUILATERAL TRIANGLE. IT IS RECOMMENDED THAT THE
+           TRIANGULAR QUALITY MEASURE BE GREATER THAN 0.01, THE MIN INTERIOR 
+           ANGLE BE GREATER THAN 10 DEGREES, AND THE MAX INTERIOR ANGLE BE LESS 
+           THAN 160 DEGREES. 
+  
+           NODAL ADJUSTMENTS ARISING FROM CONTACT INTERACTIONS AND/OR TIE 
+           CONSTRAINTS CAN CAUSE SEVERE ELEMENT DISTORTION. IT MAY BE NECESSARY 
+           TO REMESH IN ORDER TO REDUCE THE AMOUNT OF ADJUSTMENT. 
+
+ ***WARNING: 355 elements are distorted. Either the isoparametric angles are 
+             out of the suggested limits or the triangular or tetrahedral 
+             quality measure is bad. The elements have been identified in 
+             element set WarnElemDistorted.
+  
+ --------------------------------------------------------------------------------
+ Distorted tetrahedral elements
+  
+     Element     Quality measure     Min angle        Max angle     Adjusted nodes 
+ --------------- ---------------- ---------------- ---------------- -------------- 
+         GBS-1.2        0.0618137           6.4472           149.51       NO       
+        GBS-1.29      0.000920217          6.22965          131.999       NO       
+        GBS-1.38        0.0165419           21.486          118.412       NO       
+        GBS-1.43        0.0121348          24.9098           121.21       NO       
+        GBS-1.59        0.0159426          4.06223          151.729       NO       
+        GBS-1.90        0.0810186          6.06254          139.541       NO       
+        GBS-1.96          0.01514          7.04617          162.456       NO       
+       GBS-1.110        0.0192722          24.7071          127.109       NO       
+       GBS-1.119        0.0329879          8.73106          155.768       NO       
+       GBS-1.125      0.000148556          4.97896           170.17       NO       
+       GBS-1.129        0.0199349          19.3509          142.522       NO       
+       GBS-1.133      0.000230833          9.98381          168.947       NO       
+       GBS-1.141        0.0800494          6.52175          129.669       NO       
+       GBS-1.142        0.0843557          8.38711          123.098       NO       
+       GBS-1.150         0.018699          29.1878          126.742       NO       
+       GBS-1.159        0.0123584          33.5093          129.915       NO       
+       GBS-1.167      0.000140059          8.96195          165.812       NO       
+       GBS-1.174       0.00010367          7.23249          171.544       NO       
+       GBS-1.181       0.00291136          5.96157          159.359       NO       
+       GBS-1.184      0.000383906          7.84419          168.737       NO       
+       GBS-1.186        0.0169005          16.3694          157.161       NO       
+       GBS-1.194         0.040719          9.25531          147.452       NO       
+       GBS-1.196        0.0681897          5.37265          139.015       NO       
+       GBS-1.197       0.00241071          12.3762           163.74       NO       
+       GBS-1.208         0.003719          7.54948          156.793       NO       
+       GBS-1.227       0.00390242          7.93923          156.325       NO       
+       GBS-1.233        0.0100672          9.15552          142.222       NO       
+       GBS-1.234        0.0168892          13.0473          118.558       NO       
+       GBS-1.239      0.000649365          4.94573          166.838       NO       
+       GBS-1.242        0.0195813          8.63702          159.462       NO       
+       GBS-1.243       0.00782283          12.6526          156.807       NO       
+       GBS-1.244      0.000203465          7.77412          166.658       NO       
+       GBS-1.255      0.000658015          5.64103          166.943       NO       
+       GBS-1.256          0.12201          6.67706          109.666       NO       
+       GBS-1.257        0.0724646          5.27172          103.683       NO       
+       GBS-1.259        0.0034088          13.0619          151.479       NO       
+       GBS-1.260       0.00141721          6.76035          166.984       NO       
+       GBS-1.263       0.00355116          11.4654          152.577       NO       
+       GBS-1.264       0.00707955          9.24692          151.995       NO       
+       GBS-1.265         0.104691          7.98473          105.394       NO       
+       GBS-1.267      0.000472848          6.96517          163.177       NO       
+       GBS-1.268      0.000551096          9.39193          168.707       NO       
+       GBS-1.269      0.000584611          7.07167          168.731       NO       
+       GBS-1.270        0.0198678          12.1153          152.491       NO       
+       GBS-1.271      0.000511292          9.85372          166.259       NO       
+       GBS-1.272      0.000292566          9.32808          166.355       NO       
+       GBS-1.274      0.000600552          5.80155          169.059       NO       
+       GBS-1.278       0.00035072          7.87832          165.142       NO       
+       GBS-1.279      0.000768236           12.778          150.326       NO       
+       GBS-1.280       0.00343624          8.77557          161.443       NO       
+       GBS-1.281        0.0192577          10.9064          146.563       NO       
+       GBS-1.282       0.00192896          6.81972          168.915       NO       
+       GBS-1.283      0.000485552          5.73752          168.612       NO       
+       GBS-1.285      0.000855404          9.38619          159.523       NO       
+       GBS-1.286        0.0163792          10.5672          144.189       NO       
+       GBS-1.287       0.00209369          11.2588          158.527       NO       
+       GBS-1.288        0.0128588          8.75545          157.393       NO       
+       GBS-1.289        0.0113688          10.6903          157.202       NO       
+       GBS-1.291       0.00043814          6.02307          168.087       NO       
+       GBS-1.292        0.0098149          7.41987          134.806       NO       
+       GBS-1.297       0.00109081          6.75252          163.178       NO       
+       GBS-1.300          0.10266          9.38979          149.981       NO       
+       GBS-1.302       0.00102196          5.42536          165.576       NO       
+       GBS-1.303         0.203419          8.82545          119.947       NO       
+       GBS-1.304         0.132724          9.48984          125.473       NO       
+       GBS-1.306         0.072746          5.27171          103.683       NO       
+       GBS-1.309      0.000631821          8.14697          168.101       NO       
+       GBS-1.310        0.0147427          11.5367          151.809       NO       
+       GBS-1.311       0.00175644          11.1971          162.089       NO       
+       GBS-1.312         0.160445          8.22899          139.867       NO       
+       GBS-1.318        0.0159735          11.1846          157.322       NO       
+       GBS-1.320        0.0869911          8.71631          98.7137       NO       
+       GBS-1.321        0.0737781          6.37102          111.425       NO       
+       GBS-1.322       0.00616433          10.5115          143.563       NO       
+       GBS-1.325        0.0612461          9.39206          152.724       NO       
+       GBS-1.326      0.000653785          8.19056          159.386       NO       
+       GBS-1.329        0.0192023          12.6518           150.81       NO       
+       GBS-1.330       0.00953427          6.88125          141.703       NO       
+       GBS-1.331          0.01015          11.8135          151.976       NO       
+       GBS-1.334        0.0854634          9.12626          151.695       NO       
+       GBS-1.336      0.000429758          5.84005          164.998       NO       
+       GBS-1.337       0.00123656          11.3888          157.802       NO       
+       GBS-1.338       0.00125917          7.75599          152.237       NO       
+       GBS-1.342        0.0420693          8.51227          154.297       NO       
+       GBS-1.345       0.00323865          11.4796           155.44       NO       
+       GBS-1.346       0.00142134          5.17487          172.265       NO       
+       GBS-1.347      0.000508016          11.0147          162.187       NO       
+       GBS-1.349        0.0115926          7.44683          160.529       NO       
+       GBS-1.351      0.000555015          6.72743          170.038       NO       
+       GBS-1.352         0.116805          9.42581          161.312       NO       
+       GBS-1.353      0.000262215          9.31678          166.357       NO       
+       GBS-1.358      0.000150991          7.88651          169.198       NO       
+       GBS-1.360      0.000189928          6.80778          168.017       NO       
+       GBS-1.361       0.00714176          8.66031          165.074       NO       
+       GBS-1.362       0.00365899          8.40588          168.091       NO       
+       GBS-1.363        0.0869911          8.41344          98.9045       NO       
+       GBS-1.364        0.0164889          14.7998            158.9       NO       
+       GBS-1.365        0.0795949          6.66674          104.186       NO       
+       GBS-1.366         0.105143          9.14621          123.835       NO       
+       GBS-1.367       0.00878485          6.29945          154.608       NO       
+       GBS-1.368         0.121291          9.48398           134.74       NO       
+       GBS-1.370         0.136643          6.19421          107.531       NO       
+       GBS-1.372         0.079586          5.05948          111.509       NO       
+       GBS-1.373        0.0836161            5.783           103.57       NO       
+       GBS-1.374       0.00321613          5.89487          169.081       NO       
+       GBS-1.375        0.0313988          6.94613          136.085       NO       
+       GBS-1.376        0.0925303          5.36927          101.805       NO       
+       GBS-1.379      0.000361169          6.99819          167.263       NO       
+       GBS-1.380       0.00872924          12.1752          155.546       NO       
+       GBS-1.382       0.00272929          5.84198          163.028       NO       
+       GBS-1.385       0.00120391          6.97415          145.224       NO       
+       GBS-1.387      0.000397856          5.92817          170.622       NO       
+       GBS-1.388        0.0501577          6.22927          167.422       NO       
+       GBS-1.389        0.0122989          8.45986           159.59       NO       
+       GBS-1.390        0.0869144          5.04129          166.751       NO       
+       GBS-1.392        0.0154567           5.3809          170.538       NO       
+       GBS-1.393       0.00389625          8.27425          159.208       NO       
+       GBS-1.395      0.000405463          5.92587          169.231       NO       
+       GBS-1.398       0.00520083          6.50774          147.735       NO       
+       GBS-1.400        0.0313988          5.19992          124.797       NO       
+       GBS-1.402         0.027317          4.34553          141.358       NO       
+       GBS-1.404         0.092825          6.17527          169.783       NO       
+       GBS-1.405        0.0127331          13.5445          144.374       NO       
+       GBS-1.407         0.103433          5.97657          116.908       NO       
+       GBS-1.410      0.000918146           8.6431          161.204       NO       
+       GBS-1.412       0.00670182          18.3359          156.555       NO       
+       GBS-1.418       0.00229474          7.28376          124.343       NO       
+       GBS-1.420       0.00102271          8.17994          162.675       NO       
+       GBS-1.421        0.0091398          13.0688          144.558       NO       
+       GBS-1.424       0.00437752          10.3511          149.119       NO       
+       GBS-1.425       0.00112054          8.60793          119.416       NO       
+       GBS-1.428       0.00255379          10.0892          139.814       NO       
+       GBS-1.431          0.12491          6.17592          116.609       NO       
+       GBS-1.432         0.114059          7.03298          114.478       NO       
+       GBS-1.435       0.00167517          10.3222           164.71       NO       
+       GBS-1.437      0.000970058          6.27099          154.136       NO       
+       GBS-1.438        0.0156529           10.552          161.224       NO       
+       GBS-1.442        0.0103502          8.76213          148.776       NO       
+       GBS-1.445        0.0072449          15.5078          153.075       NO       
+       GBS-1.446        0.0694684          9.03333          145.756       NO       
+       GBS-1.447         0.129824          9.95164           128.72       NO       
+       GBS-1.452       0.00118544          10.0822          157.817       NO       
+       GBS-1.454       0.00530992          4.67337           154.05       NO       
+       GBS-1.455       0.00119756          8.70483          162.967       NO       
+       GBS-1.459        0.0815223          8.48933          149.754       NO       
+       GBS-1.460      0.000521345          7.78723          168.205       NO       
+       GBS-1.461        0.0187189          14.1011          156.665       NO       
+       GBS-1.464        0.0174626          13.5542          159.415       NO       
+       GBS-1.465        0.0102806          12.3382          154.697       NO       
+       GBS-1.468      0.000336748          4.92316           169.73       NO       
+       GBS-1.469        0.0037226          5.84737          171.411       NO       
+       GBS-1.471      0.000481909          6.67313          163.115       NO       
+       GBS-1.474       0.00108736          4.23417          165.652       NO       
+       GBS-1.477       0.00948836          10.0297          163.219       NO       
+       GBS-1.479        0.0260758          8.52182          142.955       NO       
+       GBS-1.480         0.013463          6.96026          157.158       NO       
+       GBS-1.481        0.0879078           7.8673          103.386       NO       
+       GBS-1.483          0.09921          6.39413          109.161       NO       
+       GBS-1.487        0.0996543          9.28137          157.173       NO       
+       GBS-1.489       0.00116899          11.1595          165.296       NO       
+       GBS-1.492         0.158084          9.00492          159.246       NO       
+       GBS-1.493       0.00159009          10.7446           152.89       NO       
+       GBS-1.499        0.0457021          8.28783          152.731       NO       
+       GBS-1.500         0.152868          9.65281          155.159       NO       
+       GBS-1.502       0.00533262          6.90357          159.952       NO       
+       GBS-1.503        0.0161671          8.66583          150.023       NO       
+       GBS-1.504       0.00360139          9.38793          157.148       NO       
+       GBS-1.506       0.00380721          12.8886          156.039       NO       
+       GBS-1.507        0.0169108          10.8617          96.4354       NO       
+       GBS-1.508         0.119476          8.71283          160.519       NO       
+       GBS-1.510       0.00434565          5.35909          159.766       NO       
+       GBS-1.512        0.0232713          7.94776          153.144       NO       
+       GBS-1.514       0.00754614          9.07631          164.453       NO       
+       GBS-1.515        0.0109987          23.5535           157.54       NO       
+       GBS-1.516        0.0188445          15.8188          144.321       NO       
+       GBS-1.517        0.0937255           6.2802          154.528       NO       
+       GBS-1.518        0.0132362          15.4725          131.184       NO       
+       GBS-1.523       0.00328832          10.3027          163.816       NO       
+       GBS-1.525       0.00314708          13.2075          160.539       NO       
+       GBS-1.527       0.00104042          7.36865          167.597       NO       
+       GBS-1.528        0.0173408          11.0636          157.052       NO       
+       GBS-1.530       0.00209942          11.8933          153.446       NO       
+       GBS-1.534        0.0590175          7.95069          164.734       NO       
+       GBS-1.535      0.000836228          9.87553          160.897       NO       
+       GBS-1.536         0.027417          7.41631          123.909       NO       
+       GBS-1.538       0.00802115          15.5492          150.993       NO       
+       GBS-1.539        0.0205523          7.97262          163.813       NO       
+       GBS-1.542          0.11373          7.44858          133.906       NO       
+       GBS-1.548         0.138674          7.06904          158.644       NO       
+       GBS-1.549       0.00258902          8.85138          144.757       NO       
+       GBS-1.556       0.00140258          8.57201          147.255       NO       
+       GBS-1.557        0.0104267          9.93713          148.039       NO       
+       GBS-1.559        0.0048985          8.68705          135.876       NO       
+       GBS-1.561      0.000400252          7.64517          166.039       NO       
+       GBS-1.562        0.0204723          8.17602          158.014       NO       
+       GBS-1.563       0.00450704          12.7981          157.075       NO       
+       GBS-1.564       0.00440575          7.31536          155.819       NO       
+       GBS-1.565         0.107245          9.43518          153.209       NO       
+       GBS-1.566        0.0645921          9.70705          153.797       NO       
+       GBS-1.570       0.00300508          6.77864          164.419       NO       
+       GBS-1.571       0.00260264           8.8192          161.035       NO       
+       GBS-1.573       0.00164237          8.57061          141.632       NO       
+       GBS-1.575        0.0492636          9.93897          138.117       NO       
+       GBS-1.576        0.0125346          12.4191          160.345       NO       
+       GBS-1.577       0.00445258          7.14966          152.713       NO       
+       GBS-1.584       0.00272929          4.38319          159.965       NO       
+       GBS-1.586       0.00665354          10.2181          160.542       NO       
+       GBS-1.595        0.0167302          19.5965          151.484       NO       
+       GBS-1.596         0.121113          9.85946           116.57       NO       
+       GBS-1.597        0.0330833          8.29669          166.013       NO       
+       GBS-1.600        0.0697555          14.6758          160.271       NO       
+       GBS-1.603         0.118699          5.55633          118.182       NO       
+       GBS-1.605        0.0967358          8.63206          138.647       NO       
+       GBS-1.606       0.00838946           8.8009          161.193       NO       
+       GBS-1.608        0.0219072          9.36348          130.759       NO       
+       GBS-1.612        0.0826223          9.10741          162.727       NO       
+       GBS-1.613      0.000410232          6.47596          170.733       NO       
+       GBS-1.616      0.000276683          5.29975          170.996       NO       
+       GBS-1.617       0.00108736          5.64098          167.158       NO       
+       GBS-1.618       0.00406242          5.73052          147.102       NO       
+       GBS-1.619       0.00469061          5.22606          158.492       NO       
+       GBS-1.622       0.00469797          7.58219          145.971       NO       
+       GBS-1.623       0.00114787          6.72277          162.606       NO       
+       GBS-1.624       0.00250661          5.48931          166.753       NO       
+       GBS-1.625       0.00220293            5.913           138.15       NO       
+       GBS-1.626        0.0142631          9.31891          160.587       NO       
+       GBS-1.627       0.00443878          10.8552          155.605       NO       
+       GBS-1.628       0.00323774          3.96323           161.11       NO       
+       GBS-1.630         0.090883          7.74134          133.911       NO       
+       GBS-1.634       0.00588711          9.75579          149.714       NO       
+       GBS-1.635       0.00275394          6.91163          151.846       NO       
+       GBS-1.638       0.00175106          12.1738          154.573       NO       
+       GBS-1.639         0.109307          8.14228          94.4846       NO       
+       GBS-1.643      0.000537419          5.89449          166.488       NO       
+       GBS-1.645        0.0950051          6.67481          107.782       NO       
+       GBS-1.646         0.110822          6.88778          112.193       NO       
+       GBS-1.647        0.0879078          9.38994          98.9256       NO       
+       GBS-1.648       0.00114047          6.25961           168.18       NO       
+       GBS-1.649        0.0169647          10.0742          137.124       NO       
+       GBS-1.650       0.00576979          17.4103          142.048       NO       
+       GBS-1.653       0.00212994          17.4477          155.109       NO       
+       GBS-1.654          0.11576          8.35086          164.085       NO       
+       GBS-1.657       0.00649393          4.61368          144.703       NO       
+       GBS-1.661       0.00103827          11.6069           162.79       NO       
+       GBS-1.662        0.0041783          12.6565          152.889       NO       
+       GBS-1.663        0.0836161          7.73693          98.8864       NO       
+       GBS-1.665      0.000603526          9.22236          161.472       NO       
+       GBS-1.666       0.00523557          7.40523          134.637       NO       
+       GBS-1.667       0.00844241          7.20902          147.086       NO       
+       GBS-1.668      0.000620256          4.93994          167.015       NO       
+       GBS-1.670         0.111139          6.50495          170.114       NO       
+       GBS-1.673      0.000520826          5.95332          162.779       NO       
+       GBS-1.675        0.0158979          8.30494          168.898       NO       
+       GBS-1.676         0.116727          6.54219          109.985       NO       
+       GBS-1.677         0.117934          9.08407          108.666       NO       
+       GBS-1.681       0.00570089          7.26358          167.672       NO       
+       GBS-1.685        0.0115046           17.612          146.855       NO       
+       GBS-1.689       0.00927763           13.493           153.91       NO       
+       GBS-1.693        0.0702679          7.01753          119.256       NO       
+       GBS-1.696        0.0100996          12.3862          153.388       NO       
+       GBS-1.697        0.0100996          12.6296          155.558       NO       
+       GBS-1.698        0.0178117          14.0744          156.404       NO       
+       GBS-1.699         0.174347          9.67986          90.2257       NO       
+       GBS-1.700        0.0702679          7.01753          119.256       NO       
+       GBS-1.701          0.12427          6.72482          115.058       NO       
+       GBS-1.702          0.12427          8.78957            118.7       NO       
+       GBS-1.704       0.00897468          19.3704            139.3       NO       
+       GBS-1.715        0.0971329          8.79554          154.005       NO       
+       GBS-1.718        0.0981704          9.13376          109.705       NO       
+       GBS-1.722       0.00927763          13.1056          157.249       NO       
+       GBS-1.725        0.0935589          6.69798          160.469       NO       
+       GBS-1.726        0.0627279          9.08282          129.136       NO       
+       GBS-1.732       0.00897468          9.95707          149.793       NO       
+       GBS-1.735        0.0858257          6.15739          161.638       NO       
+       GBS-1.738       0.00567284          12.2978          133.656       NO       
+       GBS-1.747        0.0920415          7.28484          158.687       NO       
+       GBS-1.752        0.0627279          5.05809          154.103       NO       
+       GBS-1.757        0.0935589          6.69798          160.469       NO       
+       GBS-1.760       0.00567284           12.459          154.292       NO       
+       GBS-1.762        0.0702679          7.01753          119.256       NO       
+       GBS-1.768        0.0168098          18.7142          148.906       NO       
+       GBS-1.776        0.0702679           5.3343          159.995       NO       
+       GBS-1.777        0.0702679           5.3343          159.995       NO       
+       GBS-1.790        0.0935589          6.69798          160.469       NO       
+       GBS-1.795        0.0168098          15.9977          155.741       NO       
+       GBS-1.797        0.0981704          8.57681          116.744       NO       
+       GBS-1.801        0.0935589           9.3623          126.876       NO       
+       GBS-1.805         0.103459          9.63402          151.335       NO       
+       GBS-1.807         0.094112          7.51016          110.872       NO       
+       GBS-1.808         0.094112          7.51016          110.872       NO       
+       GBS-1.818         0.190445          9.93666          106.377       NO       
+       GBS-1.821         0.094112          6.32696          161.586       NO       
+       GBS-1.827         0.080263          8.01835          112.233       NO       
+       GBS-1.828       0.00144974          9.74069          164.807       NO       
+       GBS-1.831        0.0108964          19.1865          135.538       NO       
+       GBS-1.836        0.0115046          12.6385          133.473       NO       
+       GBS-1.841         0.103459          9.63402          151.335       NO       
+       GBS-1.842        0.0858257          6.15739          161.638       NO       
+       GBS-1.845        0.0627279          5.05809          154.103       NO       
+       GBS-1.854        0.0702679           5.3343          138.284       NO       
+       GBS-1.855        0.0920415          7.28484          158.687       NO       
+       GBS-1.860        0.0858257          6.15739          103.765       NO       
+       GBS-1.865        0.0087002          11.6873          154.551       NO       
+       GBS-1.872         0.128919          8.01733          93.3585       NO       
+       GBS-1.880        0.0156247          8.83617          147.152       NO       
+       GBS-1.883        0.0108964          11.2021          148.983       NO       
+       GBS-1.886        0.0858257          6.15739          103.765       NO       
+       GBS-1.888       0.00366801          15.8105          152.282       NO       
+       GBS-1.889        0.0858257          6.15739          161.638       NO       
+       GBS-1.897        0.0627279          5.05809          154.103       NO       
+       GBS-1.898       0.00144974           9.9715          165.456       NO       
+       GBS-1.900        0.0702679          7.01753          119.256       NO       
+       GBS-1.902        0.0188229          12.3588          152.136       NO       
+       GBS-1.904        0.0920415          7.28484          158.687       NO       
+       GBS-1.909         0.128919          8.42398           92.445       NO       
+       GBS-1.916        0.0702679           5.3343          159.995       NO       
+       GBS-1.918        0.0178117          19.9424           147.15       NO       
+       GBS-1.921        0.0087002           12.112          156.085       NO       
+       GBS-1.927        0.0188229          21.8951          127.401       NO       
+       GBS-1.928        0.0931465           8.0013          156.486       NO       
+       GBS-1.934        0.0785691          9.39888          97.4108       NO       
+  
+ --------------------------------------------------------------------------------
+ Distorted isoparametric elements
+  
+      Element       Min/max angle   Adjusted nodes 
+ ----------------- ---------------- -------------- 
+         TOWER-1.3          14.7401       NO       
+         TOWER-1.7          14.6526       NO       
+        TOWER-1.15          17.2024       NO       
+        TOWER-1.19          17.1244       NO       
+        TOWER-1.27          26.4366       NO       
+        TOWER-1.31           26.369       NO       
+        TOWER-1.39          22.8697       NO       
+        TOWER-1.43           22.804       NO       
+        TOWER-1.51           20.027       NO       
+        TOWER-1.55          19.9641       NO       
+        TOWER-1.61          44.8089       NO       
+        TOWER-1.62           43.964       NO       
+        TOWER-1.63          17.7144       NO       
+        TOWER-1.64          43.6209       NO       
+        TOWER-1.67          17.6546       NO       
+        TOWER-1.68          43.9808       NO       
+        TOWER-1.69          43.6018       NO       
+        TOWER-1.70          44.8089       NO       
+        TOWER-1.73          41.7082       NO       
+        TOWER-1.74          40.6668       NO       
+        TOWER-1.75          15.8001       NO       
+        TOWER-1.76          40.7629       NO       
+        TOWER-1.79          15.7434       NO       
+        TOWER-1.80          40.6845       NO       
+        TOWER-1.81          40.7444       NO       
+        TOWER-1.82          41.7082       NO       
+        TOWER-1.85          38.8756       NO       
+        TOWER-1.86          37.7892       NO       
+        TOWER-1.87          14.1916       NO       
+        TOWER-1.88          38.2611       NO       
+        TOWER-1.91          14.1379       NO       
+        TOWER-1.92          37.8075       NO       
+        TOWER-1.93           38.243       NO       
+        TOWER-1.94          38.8756       NO       
+  
+  
+  *step, name=Step_BC, nlgeom=NO
+  *step, name=Step_BC, nlgeom=NO
+  *output, field, variable=PRESELECT
+  *output, history, variable=PRESELECT
+  *step, name=Step_BC, nlgeom=NO
+  *step, name=Step_BC, nlgeom=NO
+  *static
+  *boundary
+  *dsload, amplitude=AMP_TABULAR_Z
+  *output, field, variable=PRESELECT
+  *output, history, variable=PRESELECT
+  *endstep
+  *boundary
+  *step, name=Step_BC, nlgeom=NO
+  *static
+  *boundary
+  *endstep
+
+
+     LABELS REFERENCED IN THE ABOVE TABLE
+
+      -25-     AMP_TABULAR_Z                                                                   
+
+
+
+                            P R O B L E M   S I Z E
+
+
+          NUMBER OF ELEMENTS IS                                  1030
+          NUMBER OF NODES IS                                      913
+          NUMBER OF NODES DEFINED BY THE USER                     913
+          TOTAL NUMBER OF VARIABLES IN THE MODEL                 3966
+          (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
+           VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
+
+
+
+                              END OF USER INPUT PROCESSING
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =     0.40    
+       SYSTEM TIME (SEC)    =      0.0    
+       TOTAL CPU TIME (SEC) =     0.40    
+       WALLCLOCK TIME (SEC) =            0
+1
+
+   Abaqus Learning Edition 2025                                  Date 13-janv.-2026   Time 22:25:11
+   
+
+     Calcul GBS et Tour                                                                        STEP    1  INCREMENT    1
+                                                                                          TIME COMPLETED IN THIS STEP   0.00    
+
+
+                        S T E P       1     S T A T I C   A N A L Y S I S
+
+
+                                                                                          
+
+     AUTOMATIC TIME CONTROL WITH -
+          A SUGGESTED INITIAL TIME INCREMENT OF                8.000E-02
+          AND A TOTAL TIME PERIOD OF                            4.00    
+          THE MINIMUM TIME INCREMENT ALLOWED IS                4.000E-05
+          THE MAXIMUM TIME INCREMENT ALLOWED IS                8.000E-02
+
+     LINEAR EQUATION SOLVER TYPE         DIRECT SPARSE
+  
+                   M E M O R Y   E S T I M A T E
+  
+ PROCESS      FLOATING PT       MINIMUM MEMORY        MEMORY TO
+              OPERATIONS           REQUIRED          MINIMIZE I/O
+             PER ITERATION           (MB)               (MB)
+  
+     1          1.29E+07               19                 27
+  
+ NOTE:
+      (1) SINCE ABAQUS DOES NOT PRE-ALLOCATE MEMORY AND ONLY ALLOCATES MEMORY AS NEEDED DURING THE ANALYSIS,
+          THE MEMORY REQUIREMENT PRINTED HERE CAN ONLY BE VIEWED AS A GENERAL GUIDELINE BASED ON THE BEST
+          KNOWLEDGE AVAILABLE AT THE BEGINNING OF A STEP BEFORE THE SOLUTION PROCESS HAS BEGUN.
+      (2) THE ESTIMATE IS NORMALLY UPDATED AT THE BEGINNING OF EVERY STEP. IT IS THE MAXIMUM VALUE OF THE
+          ESTIMATE FROM THE CURRENT STEP TO THE LAST STEP OF THE ANALYSIS, WITH UNSYMMETRIC SOLUTION TAKEN
+          INTO ACCOUNT IF APPLICABLE. 
+      (3) SINCE THE ESTIMATE IS BASED ON THE ACTIVE DEGREES OF FREEDOM IN THE FIRST ITERATION OF THE 
+          CURRENT STEP, THE MEMORY ESTIMATE MIGHT BE SIGNIFICANTLY DIFFERENT THAN ACTUAL USAGE FOR 
+          PROBLEMS WITH SUBSTANTIAL CHANGES IN ACTIVE DEGREES OF FREEDOM BETWEEN STEPS (OR EVEN WITHIN
+          THE SAME STEP). EXAMPLES ARE: PROBLEMS WITH SIGNIFICANT CONTACT CHANGES, PROBLEMS WITH MODEL
+          CHANGE, PROBLEMS WITH BOTH STATIC STEP AND STEADY STATE DYNAMIC PROCEDURES WHERE ACOUSTIC 
+          ELEMENTS WILL ONLY BE ACTIVATED IN THE STEADY STATE DYNAMIC STEPS.
+      (4) FOR MULTI-PROCESS EXECUTION, THE ESTIMATED VALUE OF FLOATING POINT OPERATIONS FOR EACH PROCESS
+          IS BASED ON AN INITIAL SCHEDULING OF OPERATIONS AND MIGHT NOT REFLECT THE ACTUAL FLOATING 
+          POINT OPERATIONS COMPLETED ON EACH PROCESS. OPERATIONS ARE DYNAMICALLY BALANCED DURING EXECUTION, 
+          SO THE ACTUAL BALANCE OF OPERATIONS BETWEEN PROCESSES IS EXPECTED TO BE BETTER THAN THE ESTIMATE
+          PRINTED HERE.
+      (5) THE UPPER LIMIT OF MEMORY THAT CAN BE ALLOCATED BY ABAQUS WILL IN GENERAL DEPEND ON THE VALUE OF
+          THE "MEMORY" PARAMETER AND THE AMOUNT OF PHYSICAL MEMORY AVAILABLE ON THE MACHINE. PLEASE SEE
+          THE "ABAQUS ANALYSIS USER'S MANUAL" FOR MORE DETAILS. THE ACTUAL USAGE OF MEMORY AND OF DISK
+          SPACE FOR SCRATCH DATA WILL DEPEND ON THIS UPPER LIMIT AS WELL AS THE MEMORY REQUIRED TO MINIMIZE
+          I/O. IF THE MEMORY UPPER LIMIT IS GREATER THAN THE MEMORY REQUIRED TO MINIMIZE I/O, THEN THE ACTUAL
+          MEMORY USAGE WILL BE CLOSE TO THE ESTIMATED "MEMORY TO MINIMIZE I/O" VALUE, AND THE SCRATCH DISK
+          USAGE WILL BE CLOSE-TO-ZERO; OTHERWISE, THE ACTUAL MEMORY USED WILL BE CLOSE TO THE PREVIOUSLY
+          MENTIONED MEMORY LIMIT, AND THE SCRATCH DISK USAGE WILL BE ROUGHLY PROPORTIONAL TO THE DIFFERENCE
+          BETWEEN THE ESTIMATED "MEMORY TO MINIMIZE I/O" AND THE MEMORY UPPER LIMIT. HOWEVER ACCURATE
+          ESTIMATE OF THE SCRATCH DISK SPACE IS NOT POSSIBLE.
+      (6) USING "*RESTART, WRITE" CAN GENERATE A LARGE AMOUNT OF DATA WRITTEN IN THE WORK DIRECTORY.
+
+
+          THE ANALYSIS HAS BEEN COMPLETED
+
+
+
+                              ANALYSIS COMPLETE
+                              WITH      1 WARNING MESSAGES ON THE DAT FILE
+                              AND       1 WARNING MESSAGES ON THE MSG FILE
+
+
+
+     JOB TIME SUMMARY
+       USER TIME (SEC)      =      3.8    
+       SYSTEM TIME (SEC)    =     0.70    
+       TOTAL CPU TIME (SEC) =      4.5    
+       WALLCLOCK TIME (SEC) =            4
