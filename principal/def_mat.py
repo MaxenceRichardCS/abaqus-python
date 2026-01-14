@@ -55,23 +55,3 @@ def create_and_assign_solid_material(model, part, mat_name, props):
     
     print("Materiau '{}' applique a la part '{}'.".format(mat_name, part.name))
 
-    # ... (Après la création de my_tower_part et my_gbs_part) ...
-
-# --- Définition des propriétés ---
-
-# Acier pour la Tour (Unités SI : Pa, kg/m3)
-props_steel = {
-    'young': 210e9,   # 210 GPa
-    'poisson': 0.3,
-    'density': 7850.0
-}
-
-# Béton pour le GBS
-props_concrete = {
-    'young': 30e9,    # 30 GPa
-    'poisson': 0.2,
-    'density': 2400.0
-}
-
-# --- Application des matériaux ---
-

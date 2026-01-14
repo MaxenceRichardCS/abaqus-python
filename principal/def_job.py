@@ -1,3 +1,6 @@
+from abaqus import mdb
+
+
 def lancement_job(model):
     job_name = 'Job-GBS-Tower'
 

@@ -106,7 +106,6 @@ inst_gbs, inst_tower = geom.create_assembly_geometry(
 # ---------------------------------------------------------
 # ÉTAPE 2 : MÉCANIQUE (On crée les liens et les blocages)
 # ---------------------------------------------------------
-dof = {'ux': 0, 'uy': 0, 'uz': 0, 'urx': 0, 'ury': 0, 'urz': 0}
 
 BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
 
@@ -121,20 +120,10 @@ BC.encastrement_GBS(mymodel)
 # =============================================================================
 
 # 1. Application sur la Tour
-mat.create_and_assign_solid_material(
-    model=mymodel, 
-    part=tower_part, 
-    mat_name='Steel_S355', 
-    props=props_steel
-)
+mat.create_and_assign_solid_material(model=mymodel,part=tower_part,mat_name='Steel_S355',props=props_steel)
 
 # 2. Application sur le GBS
-mat.create_and_assign_solid_material(
-    model=mymodel, 
-    part=gbs_part, 
-    mat_name='Concrete_C50', 
-    props=props_concrete
-)
+mat.create_and_assign_solid_material(model=mymodel,part=gbs_part,mat_name='Concrete_C50',props=props_concrete)
 
 #=============================================================================
 # Application  du Mesh
@@ -156,56 +145,94 @@ geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower)
 # CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
 # =============================================================================
 
-# Données d'amplitude
-force_z_temp = (
+# =============================================================================
+# A. DÉFINITION DES SCÉNARIOS DE CHARGEMENT (DATA)
+# =============================================================================
+# Ici, on rentre directement les valeurs réelles (Temps, Force en Newtons).
+# On mettra la Magnitude à 1 plus bas pour que ces valeurs soient respectées telles quelles.
+
+# Scénario 1 : Force selon X (ex: Vent principal)
+# Format : (Temps s, Force N)
+data_force_x = (
     (0.0, 0.0),
-    (1.0, 0.5),
-    (2.0, 1.0),
-    (3.0, 0.5),
-    (4.0, 0.0)
+    (1.0, 2000.0),  # Montée rapide à 2000 N
+    (2.0, 5000.0),  # Pic à 5000 N
+    (3.0, 2000.0),
+    (4.0, 0.0)      # Fin à 4s
 )
 
-# Calcul automatique de la durée et du pas de temps
-total_duration = force_z_temp[-1][0]    # Prend le dernier temps (4.0)
-target_frames = 50              # On veut environ 50 images pour l'animation
-calculated_inc = total_duration / target_frames
+# Scénario 2 : Force selon Z (ex: Courant latéral)
+# Profil différent : plus lent, moins fort, dure plus longtemps
+data_force_z = (
+    (0.0, 0.0),
+    (2.5, 800.0),   # Pic décalé à 2.5s
+    (5.0, 0.0)      # Fin à 5s
+)
 
-# Application des réglages au Step 'Step_BC'
-# Cela force Abaqus à découper le temps pour voir l'évolution progressive
+# =============================================================================
+# B. CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
+# =============================================================================
 
+# 1. Calcul de la durée totale requise
+# On regarde quel scénario finit le plus tard pour ne pas couper la simulation avant.
+max_time_x = data_force_x[-1][0]
+max_time_z = data_force_z[-1][0]
+total_duration = max(max_time_x, max_time_z)
+
+# 2. Réglage de la finesse du calcul (Incréments)
+target_frames = 50  # On veut ~50 points pour faire une belle courbe
+calc_inc = total_duration / target_frames
+
+print(f"Configuration Temps : Durée totale = {total_duration}s (Pilotée par le scénario le plus long)")
+
+# 3. Création / Mise à jour du Step
 if 'Step_BC' not in mymodel.steps:
     mymodel.StaticStep(name='Step_BC', previous='Initial')
 
 mymodel.steps['Step_BC'].setValues(
     timePeriod=total_duration,
-    initialInc=calculated_inc,
-    maxInc=calculated_inc,       # Empêche le solveur de sauter des étapes
-    minInc=total_duration * 1e-5
+    initialInc=calc_inc,
+    maxInc=calc_inc,
+    minInc=1e-5
 )
 
-# Force l'enregistrement des résultats à chaque incrément calculé
-if 'F-Output-1' in mymodel.fieldOutputRequests.keys():
+# Force la sauvegarde à chaque point calculé (pour l'animation)
+if 'F-Output-1' in mymodel.fieldOutputRequests:
     mymodel.fieldOutputRequests['F-Output-1'].setValues(frequency=1)
 
 # =============================================================================
-# Application de la force de traction
+# C. APPLICATION DES FORCES (X et Z)
 # =============================================================================
 
-# Définition du vecteur directeur (Point A -> Point B) pour l'axe Z
-vectez = ((0.0, 0.0, 0.0), (0.0, 0.0, 0.1))
-
+# 1. Application Force X
+# Vecteur X : ((0,0,0), (1,0,0)) -> Pointe vers X positif
 force.apply_tabular_surface_traction(
     model=mymodel,
-    surfaceName='Global_Outer_Surface', # On appelle la surface fusionnée
+    surfaceName='Global_Outer_Surface',
     stepName='Step_BC',
-    data=force_z_temp,
-    directionVector=vectez,
-    magnitude=1,
-    ampName='Amp_Tabular_Z'
+    data=data_force_x,               # Série de données spécifique X
+    directionVector=((0,0,0), (1,0,0)), 
+    magnitude=1.0,                   # 1.0 * Data = Valeur réelle du tableau
+    ampName='Amp_Force_X'            # Nom unique
 )
 
+# 2. Application Force Z
+# Vecteur Z : ((0,0,0), (0,0,1)) -> Pointe vers Z positif
+force.apply_tabular_surface_traction(
+    model=mymodel,
+    surfaceName='Global_Outer_Surface',
+    stepName='Step_BC',
+    data=data_force_z,               # Série de données spécifique Z
+    directionVector=((0,0,0), (0,0,1)),
+    magnitude=1.0,                   # 1.0 * Data = Valeur réelle du tableau
+    ampName='Amp_Force_Z'            # Nom unique
+)
+
+
+
+geom.create_hydro_surface_robust(mymodel, inst_gbs, inst_tower, 30)
 # =============================================================================
 # CRÉATION ET LANCEMENT DU JOB
 # =============================================================================
 
-job.lancement_job(mymodel)
+#job.lancement_job(mymodel)

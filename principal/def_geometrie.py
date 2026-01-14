@@ -384,4 +384,86 @@ def fus_outer_surfaces(model, inst_gbs, inst_tower):
         operation=UNION
     )
     print("-> Surface fusionnée 'Global_Outer_Surface' créée.")
+
+def create_hydro_surface_robust(model, inst_gbs, inst_tower, h_mer):
+    """
+    Crée la surface d'application des forces hydrodynamiques de manière ROBUSTE.
+    Méthode : Intersection entre la surface extérieure connue (Part) et une boîte de sélection en hauteur.
     
+    Garantie : Aucune face intérieure ne peut être sélectionnée.
+    """
+    print(f"--- Création Surface Hydro (Intersection Booléenne > {h_mer}m) ---")
+    a = model.rootAssembly
+    
+    # ---------------------------------------------------------
+    # 1. Récupération des Surfaces Extérieures PROPRES (Définies dans les Parts)
+    # ---------------------------------------------------------
+    # Ces surfaces existent déjà et sont saines (ne contiennent que la peau ext.)
+    try:
+        s_clean_gbs = inst_gbs.surfaces['GBS_Outer_Surface']
+        s_clean_tower = inst_tower.surfaces['Tower_Lateral_Surface']
+    except KeyError:
+        raise KeyError("Les surfaces 'GBS_Outer_Surface' ou 'Tower_Lateral_Surface' n'existent pas sur les instances. Vérifiez create_tower et create_fused_gbs.")
+
+    # On crée une surface temporaire qui contient TOUT l'extérieur (Haut + Bas)
+    surf_total_clean_name = '__Temp_Outer_All__'
+    if surf_total_clean_name in a.surfaces: del a.surfaces[surf_total_clean_name]
+    
+    s_total_clean = a.SurfaceByBoolean(
+        name=surf_total_clean_name,
+        surfaces=(s_clean_gbs, s_clean_tower),
+        operation=UNION
+    )
+
+    # ---------------------------------------------------------
+    # 2. Sélection de la ZONE DE HAUTEUR (Sale)
+    # ---------------------------------------------------------
+    # On prend TOUTES les faces au-dessus de h_mer (Intérieur + Extérieur)
+    # On y va "à la louche" avec une bounding box géante
+    faces_zone_gbs = inst_gbs.faces.getByBoundingBox(yMin=h_mer - 0.01, yMax=9999.0)
+    faces_zone_tower = inst_tower.faces.getByBoundingBox(yMin=h_mer - 0.01, yMax=9999.0)
+    
+    if len(faces_zone_gbs) == 0 and len(faces_zone_tower) == 0:
+        raise ValueError(f"Aucune face trouvée au-dessus de {h_mer}m !")
+
+    # On crée une surface temporaire "Zone" (qui contient aussi l'intérieur du tube, ce qu'on ne veut pas)
+    surf_zone_name = '__Temp_Zone_Height__'
+    # Astuce : Pour créer une surface à partir de listes de faces de deux instances, 
+    # il faut passer par une séquence unique ou deux surfaces temp.
+    # Ici on fait simple : 2 surfaces temp puis Union.
+    
+    surfs_to_merge = []
+    if len(faces_zone_gbs) > 0:
+        surfs_to_merge.append(a.Surface(name='__T1__', side1Faces=faces_zone_gbs))
+    if len(faces_zone_tower) > 0:
+        surfs_to_merge.append(a.Surface(name='__T2__', side1Faces=faces_zone_tower))
+        
+    if len(surfs_to_merge) == 1:
+        s_zone_height = surfs_to_merge[0]
+    else:
+        s_zone_height = a.SurfaceByBoolean(name=surf_zone_name, surfaces=tuple(surfs_to_merge), operation=UNION)
+
+    # ---------------------------------------------------------
+    # 3. L'INTERSECTION MAGIQUE (Le Filtre)
+    # ---------------------------------------------------------
+    # On garde seulement ce qui est à la fois "Propre" ET "Dans la zone"
+    
+    final_name = 'Global_Outer_Surface'
+    # Suppression préventive
+    if final_name in a.surfaces: del a.surfaces[final_name]
+    
+    a.SurfaceByBoolean(
+        name=final_name,
+        surfaces=(s_total_clean, s_zone_height),
+        operation=INTERSECTION
+    )
+    
+    # ---------------------------------------------------------
+    # 4. Nettoyage des surfaces temporaires
+    # ---------------------------------------------------------
+    # On supprime les surfaces intermédiaires pour ne pas polluer l'arbre
+    temp_names = [surf_total_clean_name, surf_zone_name, '__T1__', '__T2__']
+    for name in temp_names:
+        if name in a.surfaces: del a.surfaces[name]
+
+    print(f"-> Surface '{final_name}' créée par Intersection Booléenne (Sûre à 100%).")
