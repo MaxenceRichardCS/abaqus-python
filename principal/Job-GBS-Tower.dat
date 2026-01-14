@@ -1,6 +1,6 @@
 1
 
-   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 11:28:08
+   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 13:08:01
    
 
 
@@ -31,43 +31,47 @@
   *solidsection, elset=ASSEMBLY_TOWER-1_SET_MATERIAL_WHOLEPART, material=STEEL_S355
   *solidsection, elset=ASSEMBLY_GBS-1_SET_MATERIAL_WHOLEPART, material=CONCRETE_C50
   *solidsection, elset=ASSEMBLY_TOWER-1_SET_MATERIAL_WHOLEPART, material=STEEL_S355
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_MAIN_GBS
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_SECONDARY_TOWER
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
-  *kinematic
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_MAIN_GBS
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_SECONDARY_TOWER
+  *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_MAIN_GBS
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_SECONDARY_TOWER
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
+  *boundary
+  *boundary
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
 
- ***NOTE: WHENEVER A TRANSLATION (ROTATION) DOF AT A NODE IS CONSTRAINED BY A 
-          KINEMATIC COUPLING DEFINITION THE TRANSLATION (ROTATION) DOFS FOR 
-          THAT NODE CANNOT BE INCLUDED IN ANY OTHER CONSTRAINT INCLUDING MPCS, 
-          RIGID BODIES, ETC.
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
-  *coupling, constraintname=ASSEMBLY_COUPLING_PIPE_GBS, refnode=ASSEMBLY_RP_INTERFACE, surface=ASSEMBLY_TOWER_CONTACT_SURF
-  *boundary
-  *boundary
-  *boundary
-  *boundary
+ ***WARNING: FOR *TIE PAIR 
+             (ASSEMBLY_SURF_TIE_SECONDARY_TOWER-ASSEMBLY_SURF_TIE_MAIN_GBS), 
+             ADJUSTED NODES WITH VERY SMALL ADJUSTMENTS WERE NOT PRINTED. 
+             SPECIFY *PREPRINT,MODEL=YES FOR COMPLETE PRINTOUT.
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
   *surface, type=ELEMENT, name=ASSEMBLY_GBS-1_GBS_OUTER_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_TOWER-1_TOWER_LATERAL_SURFACE
   *surface, type=ELEMENT, name=ASSEMBLY_GLOBAL_OUTER_SURFACE
-  *surface, type=ELEMENT, name=ASSEMBLY_TOWER_CONTACT_SURF
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_MAIN_GBS
+  *surface, type=ELEMENT, name=ASSEMBLY_SURF_TIE_SECONDARY_TOWER
+  *tie, name=ASSEMBLY_CONSTRAINT_TIE_TOWER_GBS, adjust=YES
   *output, field, variable=PRESELECT
   *output, history, variable=PRESELECT
   *output, field, variable=PRESELECT
   *output, history, variable=PRESELECT
   *output, field, variable=PRESELECT
   *output, history, variable=PRESELECT
-
- ***NOTE: MPCS (EXTERNAL or INTERNAL, including those generated from rigid body 
-          definitions), KINEMATIC COUPLINGS, AND/OR EQUATIONS WILL ACTIVATE 
-          ADDITIONAL DEGREES OF FREEDOM
   
                                E L E M E N T   Q U A L I T Y  C H E C K S        
   
@@ -98,7 +102,7 @@
            CONSTRAINTS CAN CAUSE SEVERE ELEMENT DISTORTION. IT MAY BE NECESSARY 
            TO REMESH IN ORDER TO REDUCE THE AMOUNT OF ADJUSTMENT. 
 
- ***WARNING: 355 elements are distorted. Either the isoparametric angles are 
+ ***WARNING: 337 elements are distorted. Either the isoparametric angles are 
              out of the suggested limits or the triangular or tetrahedral 
              quality measure is bad. The elements have been identified in 
              element set WarnElemDistorted.
@@ -435,40 +439,22 @@
   
       Element       Min/max angle   Adjusted nodes 
  ----------------- ---------------- -------------- 
-         TOWER-1.3          14.7401       NO       
-         TOWER-1.7          14.6526       NO       
-        TOWER-1.15          17.2024       NO       
-        TOWER-1.19          17.1244       NO       
-        TOWER-1.27          26.4366       NO       
-        TOWER-1.31           26.369       NO       
-        TOWER-1.39          22.8697       NO       
-        TOWER-1.43           22.804       NO       
-        TOWER-1.51           20.027       NO       
-        TOWER-1.55          19.9641       NO       
-        TOWER-1.61          44.8089       NO       
-        TOWER-1.62           43.964       NO       
-        TOWER-1.63          17.7144       NO       
-        TOWER-1.64          43.6209       NO       
-        TOWER-1.67          17.6546       NO       
-        TOWER-1.68          43.9808       NO       
-        TOWER-1.69          43.6018       NO       
-        TOWER-1.70          44.8089       NO       
-        TOWER-1.73          41.7082       NO       
-        TOWER-1.74          40.6668       NO       
-        TOWER-1.75          15.8001       NO       
-        TOWER-1.76          40.7629       NO       
-        TOWER-1.79          15.7434       NO       
-        TOWER-1.80          40.6845       NO       
-        TOWER-1.81          40.7444       NO       
-        TOWER-1.82          41.7082       NO       
-        TOWER-1.85          38.8756       NO       
-        TOWER-1.86          37.7892       NO       
-        TOWER-1.87          14.1916       NO       
-        TOWER-1.88          38.2611       NO       
-        TOWER-1.91          14.1379       NO       
-        TOWER-1.92          37.8075       NO       
-        TOWER-1.93           38.243       NO       
-        TOWER-1.94          38.8756       NO       
+        TOWER-1.15          35.7244       NO       
+        TOWER-1.19          35.6533       NO       
+        TOWER-1.27          29.6418       NO       
+        TOWER-1.31          29.5759       NO       
+        TOWER-1.39          25.5228       NO       
+        TOWER-1.43          25.4622       NO       
+        TOWER-1.51          22.5597       NO       
+        TOWER-1.55          22.5038       NO       
+        TOWER-1.63          20.3306       NO       
+        TOWER-1.67          20.2787       NO       
+        TOWER-1.75          18.5953       NO       
+        TOWER-1.79          18.5467       NO       
+        TOWER-1.86          43.0782       NO       
+        TOWER-1.87           17.207       NO       
+        TOWER-1.91          17.1613       NO       
+        TOWER-1.92          43.1954       NO       
   
   
   *step, name=Step_BC, nlgeom=NO
@@ -478,7 +464,6 @@
   *step, name=Step_BC, nlgeom=NO
   *step, name=Step_BC, nlgeom=NO
   *static
-  *boundary
   *dsload, amplitude=AMP_TABULAR_Z
   *output, field, variable=PRESELECT
   *output, history, variable=PRESELECT
@@ -486,13 +471,12 @@
   *boundary
   *step, name=Step_BC, nlgeom=NO
   *static
-  *boundary
   *endstep
 
 
      LABELS REFERENCED IN THE ABOVE TABLE
 
-      -25-     AMP_TABULAR_Z                                                                   
+      -22-     AMP_TABULAR_Z                                                                   
 
 
 
@@ -500,9 +484,9 @@
 
 
           NUMBER OF ELEMENTS IS                                  1030
-          NUMBER OF NODES IS                                      913
-          NUMBER OF NODES DEFINED BY THE USER                     913
-          TOTAL NUMBER OF VARIABLES IN THE MODEL                 3966
+          NUMBER OF NODES IS                                      481
+          NUMBER OF NODES DEFINED BY THE USER                     481
+          TOTAL NUMBER OF VARIABLES IN THE MODEL                 1443
           (DEGREES OF FREEDOM PLUS MAX NO. OF ANY LAGRANGE MULTIPLIER
            VARIABLES. INCLUDE *PRINT,SOLVE=YES TO GET THE ACTUAL NUMBER.)
 
@@ -514,12 +498,12 @@
 
      JOB TIME SUMMARY
        USER TIME (SEC)      =      1.2    
-       SYSTEM TIME (SEC)    =     0.70    
-       TOTAL CPU TIME (SEC) =      1.9    
+       SYSTEM TIME (SEC)    =     0.20    
+       TOTAL CPU TIME (SEC) =      1.4    
        WALLCLOCK TIME (SEC) =            1
 1
 
-   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 11:28:12
+   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 13:08:04
    
 
      Calcul GBS et Tour                                                                        STEP    1  INCREMENT    1
@@ -545,7 +529,7 @@
               OPERATIONS           REQUIRED          MINIMIZE I/O
              PER ITERATION           (MB)               (MB)
   
-     1          1.29E+07               19                 27
+     1          1.29E+07               17                 26
   
  NOTE:
       (1) SINCE ABAQUS DOES NOT PRE-ALLOCATE MEMORY AND ONLY ALLOCATES MEMORY AS NEEDED DURING THE ANALYSIS,
@@ -583,13 +567,12 @@
 
 
                               ANALYSIS COMPLETE
-                              WITH      1 WARNING MESSAGES ON THE DAT FILE
-                              AND       1 WARNING MESSAGES ON THE MSG FILE
+                              WITH      2 WARNING MESSAGES ON THE DAT FILE
 
 
 
      JOB TIME SUMMARY
-       USER TIME (SEC)      =      17.    
-       SYSTEM TIME (SEC)    =      6.7    
-       TOTAL CPU TIME (SEC) =      24.    
-       WALLCLOCK TIME (SEC) =           11
+       USER TIME (SEC)      =      13.    
+       SYSTEM TIME (SEC)    =      5.3    
+       TOTAL CPU TIME (SEC) =      19.    
+       WALLCLOCK TIME (SEC) =            8

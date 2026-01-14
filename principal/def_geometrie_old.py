@@ -8,69 +8,51 @@ from math import pi
 import numpy as np
 import regionToolset
 
+# =============================================================================
+# 2. Paramètres
+# =============================================================================
+param_geom = {
+    # Tower
+    'r_up_tower': 1.0,
+    'r_down_tower': 3.0,
+    'h_tower': 50.0,
+    'thickness_tower': 0.5,
+
+    # Plateau (solid)
+    'plateau_radius': 15.5,
+    'plateau_height': 1.7,
+
+    # Cône GBS (hollow)
+    'cone_height': 25.34,
+    'cone_top_outer_radius': 3.5,
+    'cone_bottom_outer_radius': 10.0,
+    'cone_thickness': 0.5,
+
+    # Cylindre au-dessus du cône
+    'cyl_height': 18.0,
+}
 
 # =============================================================================
 # 3. Vérification des paramètres
 # =============================================================================
 
 def check_parameters(params):
-    """
-    Vérifie la validité physique des paramètres et surtout la compatibilité
-    géométrique entre la Tour et le GBS pour l'interaction (Tie/Contact).
-    """
-    
-    # --- 1. Vérifications Basiques (Valeurs positives) ---
     if params['cone_thickness'] <= 0:
-        raise ValueError("L'épaisseur du cône (GBS) doit être positive.")
-        
+        raise ValueError("Cone thickness must be positive.")
     if params['cone_top_outer_radius'] <= 0:
-        raise ValueError("Le rayon haut du GBS doit être positif.")
-        
+        raise ValueError("Cone top outer radius must be positive.")
     if params['cone_bottom_outer_radius'] <= params['cone_thickness']:
-        raise ValueError("Le rayon bas du cône doit être supérieur à son épaisseur.")
-        
+        raise ValueError("Cone bottom radius must be larger than thickness.")
     if params['plateau_radius'] <= 0 or params['plateau_height'] <= 0:
-        raise ValueError("Les dimensions du plateau doivent être positives.")
-        
+        raise ValueError("Plateau dimensions must be positive.")
     if params['cyl_height'] <= 0:
-        raise ValueError("La hauteur du cylindre supérieur doit être positive.")
-        
+        raise ValueError("Cylinder height must be positive.")
+    if params['r_up_tower'] >= params['cone_top_outer_radius']:
+        raise ValueError("Tower upper radius must be smaller than GBS top outer radius.")
+    if params['r_down_tower'] > params['cone_top_outer_radius']:
+        raise ValueError("Tower lower radius must be smaller or equal to GBS top outer radius.")
     if params['thickness_tower'] <= 0:
-        raise ValueError("L'épaisseur de la tour doit être positive.")
-
-    # --- 2. Vérification de l'Interface (CRITIQUE pour le Tie Master/Slave) ---
-    
-    # Calcul des limites physiques du sommet du GBS (La surface de béton disponible)
-    r_gbs_ext = params['cone_top_outer_radius']           # Bord extérieur
-    r_gbs_hole = r_gbs_ext - params['cone_thickness']     # Bord du trou intérieur
-    
-    r_tower_bot = params['r_down_tower']                  # Rayon extérieur bas de la tour
-
-    # CAS A : La tour est trop fine, elle tombe dans le trou
-    # C'est ce qui causait votre erreur "Slave surface has no intersection"
-    if r_tower_bot <= r_gbs_hole:
-        raise ValueError(
-            f"\nERREUR GÉOMÉTRIQUE CRITIQUE :\n"
-            f"La base de la tour (R={r_tower_bot}) est plus petite que le trou du GBS (R={r_gbs_hole}).\n"
-            f"-> La tour tombe à travers le GBS. Aucune interaction possible.\n"
-            f"-> SOLUTION : Augmentez 'r_down_tower' (ex: {r_gbs_hole + 0.25})."
-        )
-
-    # CAS B : La tour est trop large, elle dépasse du GBS
-    if r_tower_bot > r_gbs_ext:
-        raise ValueError(
-            f"\nERREUR GÉOMÉTRIQUE :\n"
-            f"La base de la tour (R={r_tower_bot}) est plus large que le sommet du GBS (R={r_gbs_ext}).\n"
-            f"-> La tour flotte dans le vide à l'extérieur.\n"
-            f"-> SOLUTION : Réduisez 'r_down_tower'."
-        )
-
-    # --- 3. Vérifications de cohérence Tour (Forme conique) ---
-    if params['r_up_tower'] >= params['r_down_tower']:
-        # Ce n'est pas une erreur bloquante pour Abaqus, mais bizarre pour une tour éolienne
-        print("ATTENTION : Le rayon haut de la tour est plus grand que le bas (Cône inversé ?).")
-
-    print("Paramètres géométriques vérifiés")
+        raise ValueError("Pipe thickness must be positive.")
 
 # =============================================================================
 # 5. Fonction de création du mât
@@ -344,37 +326,85 @@ def create_fused_gbs(model, params):
 # 7. Définition de l'Assembly 
 # =============================================================================
 
-# =============================================================================
-# FONCTION 1 : GESTION DE LA GÉOMÉTRIE (INSTANCES + POSITION)
-# =============================================================================
-def create_assembly_geometry(model, tower_part_name, gbs_part_name, h_pipe_bottom, h_gbs_top):
+
+def assemble_tower_gbs(
+        model,
+        tower_part,
+        gbs_part,
+        h_pipe_bottom=0.0,
+        h_gbs_top=0.0,
+        dof=None,
+        step_name='Step_BC'):
     """
-    Gère uniquement la mise en place des instances dans l'espace.
-    Garantit le mode dependent=ON.
+    Assemble Tower + GBS.
+
     """
+    
+    # Gestion entrées
+    if isinstance(tower_part, (tuple, list)): tower_part = tower_part[0]
+    if isinstance(gbs_part, (tuple, list)): gbs_part = gbs_part[0]
+
     a = model.rootAssembly
     
-    # 1. Nettoyage complet (pour éviter les conflits si on relance)
-    # On supprime les features (RP, Couplings...) et les instances
+    # Nettoyage complet
     if hasattr(a, 'features'):
-        a.deleteFeatures(a.features.keys())
+        for f in list(a.features.keys()): del a.features[f]
     if hasattr(a, 'instances'):
         for i in list(a.instances.keys()): del a.instances[i]
 
-    # 2. Création des instances (Le "Contrat de dépendance" est signé ici)
-    # On utilise les noms de parts (str) pour récupérer les objets parts
-    p_gbs = model.parts[gbs_part_name]
-    p_tower = model.parts[tower_part_name]
-    
-    inst_gbs = a.Instance(name='GBS-1', part=p_gbs, dependent=ON)
-    inst_tower = a.Instance(name='Tower-1', part=p_tower, dependent=ON)
+    # Instanciation
+    inst_gbs = a.Instance(name='GBS-1', part=gbs_part, dependent=ON)
+    inst_tower = a.Instance(name='Tower-1', part=tower_part, dependent=ON)
 
-    # 3. Positionnement (Translation)
+    # Positionnement (Translation robuste via inst.name)
     dy = h_gbs_top - h_pipe_bottom
     a.translate(instanceList=(inst_tower.name, ), vector=(0.0, dy, 0.0))
     
-    print("Assemblage géométrique terminé.")
-    return inst_gbs, inst_tower
+    # REGÉNÉRATION (Indispensable)
+    a.regenerate()
+
+    # Reference Point (RP)
+    a.ReferencePoint(point=(0.0, h_gbs_top, 0.0))
+    rp_obj = a.referencePoints.findAt((0.0, h_gbs_top, 0.0), )
+    rp_set = a.Set(name='RP_Interface', referencePoints=(rp_obj,))
+
+    # Surface Esclave (Tour)
+    pipe_surf = a.Surface(
+        side1Faces=inst_tower.faces[:],
+        name='Pipe_Contact_Surf'
+    )
+
+    # --- COUPLING (Retour à votre méthode originale) ---
+    model.Coupling(
+        name='Coupling_Pipe_GBS',
+        controlPoint=rp_set,
+        surface=pipe_surf,
+        influenceRadius=WHOLE_SURFACE,
+        couplingType=KINEMATIC,
+        u1=ON, u2=ON, u3=ON, ur1=ON, ur2=ON, ur3=ON
+    )
+
+    # BC & Step
+    if dof is not None:
+        if step_name not in model.steps:
+            model.StaticStep(name=step_name, previous='Initial')
+
+        bc_args = {'name': 'BC_Interface', 'createStepName': step_name, 'region': rp_set}
+        trans_map = {'ux':'u1', 'uy':'u2', 'uz':'u3'}
+        rot_map = {'urx':'ur1', 'ury':'ur2', 'urz':'ur3'}
+        
+        for k, v in trans_map.items():
+            if k in dof and dof[k] is not None: bc_args[v] = dof[k]
+        
+        deg_to_rad = pi / 180.0
+        for k, v in rot_map.items():
+            if k in dof and dof[k] is not None: bc_args[v] = dof[k] * deg_to_rad
+
+        if len(bc_args) > 3:
+            model.DisplacementBC(**bc_args)
+
+    return rp_set
+
 
 # =============================================================================
 # 7. Fusion des surfaces extérieures

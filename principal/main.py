@@ -3,9 +3,10 @@ import def_mesh  as meshpart
 import def_mat as mat
 import def_boundaryconditions as BC
 import def_force as force
+import def_job as job
 
 # =============================================================================
-# 1. Initialisation du modèle Abaqus
+# Initialisation du modèle Abaqus
 # =============================================================================
 from abaqus import mdb
 from abaqusConstants import *
@@ -24,7 +25,6 @@ mymodel = mdb.Model(name='Model-1')
 # Vérification
 print("Nom du modèle créé :", mymodel.name)
 
-
 # Configuration viewport
 myview = session.Viewport(
     name='TecnoDigital School',
@@ -36,12 +36,12 @@ myview.maximize()
 myview.partDisplay.geometryOptions.setValues(referenceRepresentation=ON)
 
 # =============================================================================
-# 2. Paramètres
+# Paramètres
 # =============================================================================
 param_geom = {
     # Tower
     'r_up_tower': 1.0,
-    'r_down_tower': 3.0,
+    'r_down_tower': 3.5,
     'h_tower': 50.0,
     'thickness_tower': 0.5,
 
@@ -72,6 +72,11 @@ props_concrete = {
     'density': 2400.0
 }
 
+param_mesh = {
+    'Tower':6.0 , #compromis pour rester en dessous de 1 000 noeuds 
+    'GBS' :5.0  #compromis pour rester en dessous de 1 000 noeuds 
+}
+
 # =============================================================================
 # Vérification des paramètres et création des deux Parts 
 # =============================================================================
@@ -84,7 +89,6 @@ gbs_part = geom.create_fused_gbs(mymodel,param_geom)
 # =============================================================================
 # Création de l'Assembly 
 # =============================================================================
-
 
 h_gbs_top = param_geom['plateau_height'] + param_geom['cone_height'] + param_geom['cyl_height']
 
@@ -104,16 +108,10 @@ inst_gbs, inst_tower = geom.create_assembly_geometry(
 # ---------------------------------------------------------
 dof = {'ux': 0, 'uy': 0, 'uz': 0, 'urx': 0, 'ury': 0, 'urz': 0}
 
-BC.create_interaction_tower_GBS(
-    mymodel,
-    inst_tower=inst_tower,    # On passe l'objet instance créé juste au-dessus
-    h_interface=h_gbs_top,
-    dof=dof,
-    step_name='Step_BC'
-)
+BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
 
 # =============================================================================
-# Application des BC
+# Application de l'encastrement au sol
 # =============================================================================
 
 BC.encastrement_GBS(mymodel)
@@ -143,41 +141,23 @@ mat.create_and_assign_solid_material(
 # =============================================================================
 
 # 1. Application sur la Tour
-meshpart.MeshTower(tower_part)
+meshpart.MeshTower(tower_part,param_mesh['Tower'])
 
 # 2. Application sur le GBS
-meshpart.MeshGBS(gbs_part)
+meshpart.MeshGBS(gbs_part, param_mesh['GBS'])
 
 # =============================================================================
-# 1. INITIALISATION ET CRÉATION DES INSTANCES
+# GESTION DES SURFACES (FUSION)
 # =============================================================================
 
-a = mymodel.rootAssembly
-
-# Récupération des pièces
-p_gbs = mymodel.parts['GBS_Fused']
-p_tower = mymodel.parts['Tower']
-
-# Création explicite des instances en mode DÉPENDANT (héritent du maillage des parts)
-# Il est impératif de faire cela avant de manipuler les surfaces
-if 'GBS-1' not in a.instances.keys():
-    a.Instance(name='GBS-1', part=p_gbs, dependent=ON)
-
-if 'Tower-1' not in a.instances.keys():
-    a.Instance(name='Tower-1', part=p_tower, dependent=ON)
+geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower)
 
 # =============================================================================
-# 2. GESTION DES SURFACES (FUSION)
+# CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
 # =============================================================================
 
-geom.fus_outer_surfaces(mymodel)
-
-# =============================================================================
-# 3. CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
-# =============================================================================
-
-# Vos données d'amplitude
-data = (
+# Données d'amplitude
+force_z_temp = (
     (0.0, 0.0),
     (1.0, 0.5),
     (2.0, 1.0),
@@ -186,12 +166,16 @@ data = (
 )
 
 # Calcul automatique de la durée et du pas de temps
-total_duration = data[-1][0]    # Prend le dernier temps (4.0)
+total_duration = force_z_temp[-1][0]    # Prend le dernier temps (4.0)
 target_frames = 50              # On veut environ 50 images pour l'animation
 calculated_inc = total_duration / target_frames
 
 # Application des réglages au Step 'Step_BC'
 # Cela force Abaqus à découper le temps pour voir l'évolution progressive
+
+if 'Step_BC' not in mymodel.steps:
+    mymodel.StaticStep(name='Step_BC', previous='Initial')
+
 mymodel.steps['Step_BC'].setValues(
     timePeriod=total_duration,
     initialInc=calculated_inc,
@@ -204,7 +188,7 @@ if 'F-Output-1' in mymodel.fieldOutputRequests.keys():
     mymodel.fieldOutputRequests['F-Output-1'].setValues(frequency=1)
 
 # =============================================================================
-# 5. APPEL DE LA FONCTION
+# Application de la force de traction
 # =============================================================================
 
 # Définition du vecteur directeur (Point A -> Point B) pour l'axe Z
@@ -214,29 +198,14 @@ force.apply_tabular_surface_traction(
     model=mymodel,
     surfaceName='Global_Outer_Surface', # On appelle la surface fusionnée
     stepName='Step_BC',
-    data=data,
+    data=force_z_temp,
     directionVector=vectez,
-    magnitude=10.0,
+    magnitude=1,
     ampName='Amp_Tabular_Z'
 )
 
 # =============================================================================
-# 6. CRÉATION ET LANCEMENT DU JOB
+# CRÉATION ET LANCEMENT DU JOB
 # =============================================================================
-def lancement_job(model):
-    job_name = 'Job-GBS-Tower'
 
-    # Création du Job
-    mdb.Job(name=job_name, model=model, description='Calcul GBS et Tour')
-
-    # Soumission du Job
-    print("Soumission du job {}...".format(job_name))
-    mdb.jobs[job_name].submit()
-
-    # Attente de la fin du calcul
-    print("Calcul en cours...")
-    mdb.jobs[job_name].waitForCompletion()
-
-    print("Calcul terminé. Le fichier .odb est généré.")
-
-lancement_job(mymodel)
+job.lancement_job(mymodel)

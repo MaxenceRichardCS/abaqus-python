@@ -1,82 +1,99 @@
-from abaqus import mdb
+# -*- coding: utf-8 -*-
+# =============================================================================
+# FICHIER : def_mesh.py
+# DESCRIPTION : Gestion du maillage (Discrétisation) des pièces.
+#               Définit la taille, la forme et le type des éléments finis.
+# =============================================================================
+
+from abaqus import *
 from abaqusConstants import *
-from caeModules import *
-from driverUtils import executeOnCaeStartup
+import mesh # Indispensable pour utiliser mesh.ElemType
 
+# =============================================================================
+# MAILLAGE DE LA TOUR (HEXAÈDRES - C3D8R)
+# =============================================================================
 
-## Améliorer la taille du seed part 
-def MeshGBS(part_obj):
+def MeshTower(part_obj, size):
     """
-    Applique un maillage tétraédrique linéaire (C3D4) optimisé
-    pour la version étudiante (limite de noeuds).
+    Applique un maillage structuré en "Briques" (Hexaèdres) sur la Tour.
+    Comme la tour est un cylindre simple, on peut utiliser la technique de balayage (Sweep),
+    qui est très précise et économique.
     """
-    # -------------------------------------------------------
-    # 1. Application des graines (Seeds)
-    # -------------------------------------------------------
-    # deviationFactor=0.4 : Tolérance élevée pour accepter 
-    # que les gros éléments ne collent pas parfaitement à la courbure.
-    part_obj.seedPart(size=5.0, deviationFactor=0.4, minSizeFactor=0.1)
+    print(f"\n--- Maillage de la Tour (Taille demandée : {size}) ---")
     
-    # -------------------------------------------------------
-    # 2. Contrôle du maillage
-    # -------------------------------------------------------
-    # On force des tétraèdres (TET) en méthode libre (FREE)
-    # C'est la seule méthode capable de mailler des géométries complexes
-    part_obj.setMeshControls(
-        regions=part_obj.cells, 
-        elemShape=TET, 
-        technique=FREE
-    )
-    
-    # -------------------------------------------------------
-    # 3. Type d'élément (Économie de noeuds)
-    # -------------------------------------------------------
-    # On impose EXCLUSIVEMENT du C3D4 (Tétraèdre linéaire à 4 noeuds).
-    # Cela génère environ 2.5x moins de noeuds que le C3D10 standard.
-    part_obj.setElementType(
-        regions=(part_obj.cells,),
-        elemTypes=(
-            mesh.ElemType(elemCode=C3D4),
-        )
-    )
-    
-    # -------------------------------------------------------
-    # 4. Génération
-    # -------------------------------------------------------
-    part_obj.generateMesh()
-    
-    # Vérification console pour le debug
-    print('Maillage GBS termine. Nombre de noeuds :', len(part_obj.nodes))
+    # 1. Ensemencement (Seeding)
+    # On définit la taille cible des éléments sur les arêtes.
+    part_obj.seedPart(size=size, deviationFactor=0.1, minSizeFactor=0.1)
 
-
-def MeshTower(part_obj):
-    """
-    Applique le maillage hexaédrique par balayage (Sweep) spécifique à la tour.
-    """
-    # Application des graines avec facteurs de déviation
-    part_obj.seedPart(size=6, deviationFactor=0.1, minSizeFactor=0.1)
-
-    # Définition des contrôles de maillage (Hexaèdres par balayage)
+    # 2. Stratégie de maillage (Controls)
+    # - HEX   : On veut des éléments cubiques (briques).
+    # - SWEEP : On balaie la section le long de l'axe (parfait pour les tubes).
     part_obj.setMeshControls(
         regions=part_obj.cells,
         elemShape=HEX,
         technique=SWEEP
     )
 
-    # Préparation des types d'éléments
-    elemType1 = mesh.ElemType(elemCode=C3D8R)    # Hexaèdre linéaire réduit
-    elemType2 = mesh.ElemType(elemCode=C3D20R)   # Hexaèdre quadratique réduit
+    # 3. Choix du type d'élément
+    # C3D8R : Cube 3D à 8 noeuds, Intégration Réduite.
+    # C'est le standard pour l'acier : robuste et ne "verrouille" pas en cisaillement.
+    elemType = mesh.ElemType(elemCode=C3D8R)
 
-    # Application des types d'éléments
     part_obj.setElementType(
         regions=(part_obj.cells,),
-        elemTypes=(elemType1, elemType2)
+        elemTypes=(elemType, )
     )
 
-    # Génération du maillage
+    # 4. Génération
     part_obj.generateMesh()
 
-    print('Maillage de la tour termine. Nombre de noeuds :', len(part_obj.nodes))
+    # Bilan
+    nb_noeuds = len(part_obj.nodes)
+    nb_elems = len(part_obj.elements)
+    print(f"-> Terminé : {nb_noeuds} noeuds / {nb_elems} éléments (C3D8R).")
 
 
+# =============================================================================
+# MAILLAGE DU GBS (TÉTRAÈDRES - C3D4)
+# =============================================================================
 
+def MeshGBS(part_obj, size):
+    """
+    Applique un maillage libre en "Pyramides" (Tétraèdres) sur le GBS.
+    La géométrie fusionnée (Cône + Cylindre + Plateau) est trop complexe pour faire des cubes.
+    On utilise des tétraèdres linéaires (C3D4) pour limiter drastiquement le nombre de noeuds.
+    """
+    print(f"\n--- Maillage du GBS (Taille demandée : {size}) ---")
+
+    # 1. Ensemencement (Seeding) avec tolérance
+    # deviationFactor=0.4 : On autorise les éléments à s'éloigner un peu de la courbe parfaite.
+    # Cela permet de réduire le nombre d'éléments dans les zones courbes non critiques.
+    part_obj.seedPart(size=size, deviationFactor=0.4, minSizeFactor=0.1)
+    
+    # 2. Stratégie de maillage (Controls)
+    # - TET  : Tétraèdres (Pyramides à base triangulaire).
+    # - FREE : Maillage libre (l'algorithme remplit le volume comme il peut).
+    part_obj.setMeshControls(
+        regions=part_obj.cells, 
+        elemShape=TET, 
+        technique=FREE
+    )
+    
+    # 3. Choix du type d'élément (Optimisation Version Étudiante)
+    # C3D4 : Tétraèdre linéaire (4 noeuds).
+    # Contre-exemple : Le C3D10 (quadratique) a 10 noeuds. Pour un même volume,
+    # le C3D4 consomme ~3x moins de noeuds, évitant de dépasser la limite de 1000 noeuds.
+    elemType = mesh.ElemType(elemCode=C3D4)
+
+    part_obj.setElementType(
+        regions=(part_obj.cells,),
+        elemTypes=(elemType, )
+    )
+    
+    # 4. Génération
+    part_obj.generateMesh()
+    
+    # Bilan
+    nb_noeuds = len(part_obj.nodes)
+    nb_elems = len(part_obj.elements)
+    print(f"-> Terminé : {nb_noeuds} noeuds / {nb_elems} éléments (C3D4).")

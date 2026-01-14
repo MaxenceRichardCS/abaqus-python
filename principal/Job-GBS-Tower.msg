@@ -1,6 +1,6 @@
 1
 
-   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 11:28:12
+   Abaqus Learning Edition 2025                                  Date 14-janv.-2026   Time 13:08:04
    
 
  Calcul GBS et Tour                                                              
@@ -34,19 +34,6 @@
      FIELD CONVERSION RATIO                                             1.00    
      CRITERION FOR ZERO FORCE     REL. TO TIME AVRG. MAX. FORCE        1.000E-05
      CRITERION FOR ZERO DISP.    RELATIVE TO CHARACTERISTIC LENGTH     1.000E-08
-
- CONVERGENCE TOLERANCE PARAMETERS FOR MOMENT   
-     CRITERION FOR RESIDUAL MOMENT    FOR A NONLINEAR PROBLEM          5.000E-03
-     CRITERION FOR ROTATION CORRECTION IN A NONLINEAR PROBLEM          1.000E-02
-     INITIAL VALUE OF TIME AVERAGE MOMENT                              1.000E-02
-     AVERAGE MOMENT    IS TIME AVERAGE MOMENT   
-     ALTERNATE CRIT. FOR RESIDUAL MOMENT    FOR A NONLINEAR PROBLEM    2.000E-02
-     CRITERION FOR ZERO MOMENT    RELATIVE TO TIME AVRG. MOMENT        1.000E-05
-     CRITERION FOR RESIDUAL MOMENT    WHEN THERE IS ZERO FLUX          1.000E-05
-     CRITERION FOR ROTATION CORRECTION WHEN THERE IS ZERO FLUX         1.000E-03
-     CRITERION FOR RESIDUAL MOMENT    FOR A LINEAR INCREMENT           1.000E-08
-     FIELD CONVERSION RATIO                                             1.00    
-     CRITERION FOR ZERO MOMENT    REL. TO TIME AVRG. MAX. MOMENT       1.000E-05
 
      VOLUMETRIC STRAIN COMPATIBILITY TOLERANCE FOR HYBRID SOLIDS       1.000E-05
      AXIAL STRAIN COMPATIBILITY TOLERANCE FOR HYBRID BEAMS             1.000E-05
@@ -105,40 +92,26 @@
 
 
   INCREMENT     1 STARTS. ATTEMPT NUMBER  1, TIME INCREMENT  8.000E-02
-
- ***WARNING: THERE ARE 2 UNCONNECTED REGIONS IN THE MODEL.
-
- ***NOTE: SFM TYPE SURFACE ELEMENTS USED TO DEFINE CONTACT SURFACES NOT PART OF 
-          A RIGID BODY MAY INCREASE THE NUMBER OF UNCONNECTED REGIONS REPORTED.
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  18ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  17ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       1.04       TIME AVG. FORCE        1.04    
- LARGEST SCALED RESIDUAL FORCE      4.719E-11   AT NODE        205   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      4.719E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       1.19       TIME AVG. FORCE        1.19    
+ LARGEST SCALED RESIDUAL FORCE      5.658E-10   AT NODE        151   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      5.658E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       4.92    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -151,32 +124,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  8ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  10ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       7.02       TIME AVG. FORCE        4.03    
- LARGEST SCALED RESIDUAL FORCE     -1.860E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.860E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.711E-19   AT NODE         91   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       4.12       TIME AVG. FORCE        2.66    
+ LARGEST SCALED RESIDUAL FORCE      2.878E-10   AT NODE         93   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      2.878E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.613E-17   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       4.92    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.027E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -189,32 +153,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       10.5       TIME AVG. FORCE        6.19    
- LARGEST SCALED RESIDUAL FORCE     -1.744E-11   AT NODE        256   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.744E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -1.356E-19   AT NODE         91   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       19.0    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.540E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       6.19       TIME AVG. FORCE        3.83    
+ LARGEST SCALED RESIDUAL FORCE      4.130E-10   AT NODE         61   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      4.130E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        8.063E-18   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -227,32 +182,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  11ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       14.0       TIME AVG. FORCE        8.15    
- LARGEST SCALED RESIDUAL FORCE      1.640E-11   AT NODE        257   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.640E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        3.292E-22   AT NODE        104   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       8.25       TIME AVG. FORCE        4.94    
+ LARGEST SCALED RESIDUAL FORCE     -3.497E-10   AT NODE         61   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -3.497E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.073E-21   AT NODE          3   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       29.2    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      2.054E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -265,32 +211,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  21ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  15ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       17.5       TIME AVG. FORCE        10.0    
- LARGEST SCALED RESIDUAL FORCE      1.890E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.890E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.561E-22   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       38.4    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      2.567E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       10.3       TIME AVG. FORCE        6.01    
+ LARGEST SCALED RESIDUAL FORCE      2.642E-10   AT NODE         98   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.642E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.157E-21   AT NODE          6   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -303,32 +240,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  11ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       21.0       TIME AVG. FORCE        11.9    
- LARGEST SCALED RESIDUAL FORCE     -1.682E-11   AT NODE        257   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.682E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        4.127E-22   AT NODE         97   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       12.4       TIME AVG. FORCE        7.07    
+ LARGEST SCALED RESIDUAL FORCE     -3.673E-10   AT NODE         98   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -3.673E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -2.238E-21   AT NODE         12   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       47.2    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      3.081E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -341,32 +269,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
+        NUMBER OF FLOPS:      1.292e+07
         SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       24.6       TIME AVG. FORCE        13.7    
- LARGEST SCALED RESIDUAL FORCE     -1.946E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.946E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.870E-22   AT NODE        292   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       14.4       TIME AVG. FORCE        8.13    
+ LARGEST SCALED RESIDUAL FORCE      3.648E-10   AT NODE         76   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.648E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.455E-21   AT NODE         12   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       55.9    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      3.594E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -379,32 +298,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  20ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       28.1       TIME AVG. FORCE        15.5    
- LARGEST SCALED RESIDUAL FORCE     -1.231E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.231E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -4.410E-22   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       64.4    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      4.108E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       16.5       TIME AVG. FORCE        9.17    
+ LARGEST SCALED RESIDUAL FORCE     -2.169E-10   AT NODE        130   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -2.169E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.493E-21   AT NODE         12   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -417,32 +327,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       31.6       TIME AVG. FORCE        17.3    
- LARGEST SCALED RESIDUAL FORCE     -1.561E-11   AT NODE         91   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.561E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.809E-22   AT NODE        106   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       72.9    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      4.621E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       18.6       TIME AVG. FORCE        10.2    
+ LARGEST SCALED RESIDUAL FORCE     -2.660E-10   AT NODE         61   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -2.660E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -2.164E-21   AT NODE          8   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -455,32 +356,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       35.1       TIME AVG. FORCE        19.0    
- LARGEST SCALED RESIDUAL FORCE     -2.331E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.331E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.565E-22   AT NODE        308   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       81.3    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.135E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       20.6       TIME AVG. FORCE        11.3    
+ LARGEST SCALED RESIDUAL FORCE      2.950E-10   AT NODE         21   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.950E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.511E-21   AT NODE          5   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -493,32 +385,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  14ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  7ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       38.6       TIME AVG. FORCE        20.8    
- LARGEST SCALED RESIDUAL FORCE      1.286E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.286E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        6.812E-22   AT NODE        106   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       89.7    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.648E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       22.7       TIME AVG. FORCE        12.3    
+ LARGEST SCALED RESIDUAL FORCE      3.109E-10   AT NODE        133   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      3.109E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -2.902E-21   AT NODE         10   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -531,32 +414,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  6ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       42.1       TIME AVG. FORCE        22.6    
- LARGEST SCALED RESIDUAL FORCE      1.344E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.344E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -7.993E-22   AT NODE        106   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       98.0    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      6.162E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       24.7       TIME AVG. FORCE        13.3    
+ LARGEST SCALED RESIDUAL FORCE      2.682E-10   AT NODE         53   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.682E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.588E-21   AT NODE         10   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -569,32 +443,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  6ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       45.6       TIME AVG. FORCE        24.4    
- LARGEST SCALED RESIDUAL FORCE     -1.391E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.391E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        6.938E-22   AT NODE         93   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       26.8       TIME AVG. FORCE        14.4    
+ LARGEST SCALED RESIDUAL FORCE      3.544E-10   AT NODE         55   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.544E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.505E-21   AT NODE          9   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       106.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      6.675E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -607,32 +472,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  10ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       49.1       TIME AVG. FORCE        26.1    
- LARGEST SCALED RESIDUAL FORCE     -1.482E-11   AT NODE         94   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.482E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        7.019E-22   AT NODE        103   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       28.9       TIME AVG. FORCE        15.4    
+ LARGEST SCALED RESIDUAL FORCE      2.594E-10   AT NODE        149   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      2.594E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.565E-21   AT NODE         16   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       115.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      7.189E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -645,32 +501,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  9ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  10ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       52.6       TIME AVG. FORCE        27.9    
- LARGEST SCALED RESIDUAL FORCE      1.500E-11   AT NODE        278   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.500E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.052E-21   AT NODE         99   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       30.9       TIME AVG. FORCE        16.4    
+ LARGEST SCALED RESIDUAL FORCE      5.631E-10   AT NODE         42   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      5.631E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.758E-21   AT NODE          4   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       123.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      7.702E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -683,32 +530,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  10ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  5ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       56.1       TIME AVG. FORCE        29.7    
- LARGEST SCALED RESIDUAL FORCE     -1.255E-11   AT NODE        308   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.255E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -4.438E-22   AT NODE         99   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       131.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      8.216E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       33.0       TIME AVG. FORCE        17.5    
+ LARGEST SCALED RESIDUAL FORCE      3.239E-10   AT NODE        148   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      3.239E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.383E-21   AT NODE          1   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -721,32 +559,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  13ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       59.6       TIME AVG. FORCE        31.4    
- LARGEST SCALED RESIDUAL FORCE      1.373E-11   AT NODE        275   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.373E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -6.867E-22   AT NODE        101   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       140.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      8.729E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       35.1       TIME AVG. FORCE        18.5    
+ LARGEST SCALED RESIDUAL FORCE      2.404E-10   AT NODE        110   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.404E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -7.357E-22   AT NODE        113   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -759,32 +588,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  7ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  10ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       63.1       TIME AVG. FORCE        33.2    
- LARGEST SCALED RESIDUAL FORCE      2.076E-11   AT NODE        309   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      2.076E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        6.836E-22   AT NODE        100   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       37.1       TIME AVG. FORCE        19.5    
+ LARGEST SCALED RESIDUAL FORCE     -2.769E-10   AT NODE         21   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.769E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.141E-21   AT NODE         38   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       148.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      9.243E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -797,32 +617,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  16ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  11ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       66.6       TIME AVG. FORCE        34.9    
- LARGEST SCALED RESIDUAL FORCE      1.511E-11   AT NODE        304   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.511E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.099E-21   AT NODE         97   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       156.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      9.756E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       39.2       TIME AVG. FORCE        20.6    
+ LARGEST SCALED RESIDUAL FORCE      2.914E-10   AT NODE        129   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.914E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.955E-21   AT NODE         13   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -835,32 +646,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  15ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  6ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       70.2       TIME AVG. FORCE        36.7    
- LARGEST SCALED RESIDUAL FORCE      1.631E-11   AT NODE        263   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.631E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -1.095E-21   AT NODE        106   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       41.2       TIME AVG. FORCE        21.6    
+ LARGEST SCALED RESIDUAL FORCE     -2.677E-10   AT NODE        118   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.677E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.357E-21   AT NODE         11   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       165.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.027E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -873,32 +675,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       73.7       TIME AVG. FORCE        38.5    
- LARGEST SCALED RESIDUAL FORCE     -1.645E-11   AT NODE        257   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.645E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -5.803E-22   AT NODE        103   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       43.3       TIME AVG. FORCE        22.6    
+ LARGEST SCALED RESIDUAL FORCE      3.199E-10   AT NODE        149   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.199E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -5.787E-21   AT NODE         14   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       173.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.078E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -911,32 +704,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
+        NUMBER OF FLOPS:      1.292e+07
         SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       77.2       TIME AVG. FORCE        40.2    
- LARGEST SCALED RESIDUAL FORCE     -1.643E-11   AT NODE        263   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.643E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        4.034E-22   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       45.4       TIME AVG. FORCE        23.7    
+ LARGEST SCALED RESIDUAL FORCE     -2.391E-10   AT NODE        137   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.391E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        6.325E-21   AT NODE          8   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       181.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.130E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -949,32 +733,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  5ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       80.7       TIME AVG. FORCE        42.0    
- LARGEST SCALED RESIDUAL FORCE     -1.503E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.503E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        7.775E-22   AT NODE        106   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       47.4       TIME AVG. FORCE        24.7    
+ LARGEST SCALED RESIDUAL FORCE      4.063E-10   AT NODE        151   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      4.063E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        5.079E-21   AT NODE         27   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       189.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.181E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -987,32 +762,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  10ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       84.2       TIME AVG. FORCE        43.7    
- LARGEST SCALED RESIDUAL FORCE     -1.423E-11   AT NODE         95   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.423E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -6.722E-22   AT NODE        106   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       49.5       TIME AVG. FORCE        25.7    
+ LARGEST SCALED RESIDUAL FORCE     -3.258E-10   AT NODE        150   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -3.258E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -4.156E-21   AT NODE          4   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       198.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.232E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1025,32 +791,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  12ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       87.7       TIME AVG. FORCE        45.5    
- LARGEST SCALED RESIDUAL FORCE      2.818E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      2.818E-11
- LARGEST INCREMENT OF DISP.         2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -4.397E-21   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       206.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.284E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION     5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       51.6       TIME AVG. FORCE        26.8    
+ LARGEST SCALED RESIDUAL FORCE      2.881E-10   AT NODE        150   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.881E-10
+ LARGEST INCREMENT OF DISP.         4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -7.245E-21   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1063,32 +820,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  13ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       84.2       TIME AVG. FORCE        47.0    
- LARGEST SCALED RESIDUAL FORCE     -9.123E-11   AT NODE        245   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -9.123E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -4.584E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       214.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.232E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       49.5       TIME AVG. FORCE        27.7    
+ LARGEST SCALED RESIDUAL FORCE      1.588E-09   AT NODE         61   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      1.588E-09
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -9.445E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1101,32 +849,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  14ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       80.7       TIME AVG. FORCE        48.2    
- LARGEST SCALED RESIDUAL FORCE     -1.756E-11   AT NODE        258   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.756E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -5.431E-19   AT NODE         91   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       47.4       TIME AVG. FORCE        28.4    
+ LARGEST SCALED RESIDUAL FORCE     -2.398E-10   AT NODE         93   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.398E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        3.225E-17   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       221.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.181E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1139,32 +878,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  6ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       77.2       TIME AVG. FORCE        49.3    
- LARGEST SCALED RESIDUAL FORCE      2.316E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      2.316E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.727E-19   AT NODE         91   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       45.4       TIME AVG. FORCE        29.0    
+ LARGEST SCALED RESIDUAL FORCE     -2.075E-10   AT NODE         80   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.075E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.612E-17   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       227.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.130E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1177,32 +907,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       73.7       TIME AVG. FORCE        50.1    
- LARGEST SCALED RESIDUAL FORCE      2.121E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      2.121E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -1.537E-21   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       43.3       TIME AVG. FORCE        29.5    
+ LARGEST SCALED RESIDUAL FORCE      3.902E-10   AT NODE         61   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.902E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -4.744E-21   AT NODE         20   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       232.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.078E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1215,32 +936,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       70.2       TIME AVG. FORCE        50.8    
- LARGEST SCALED RESIDUAL FORCE     -1.856E-11   AT NODE        257   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.856E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.452E-22   AT NODE        104   DOF  1
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       236.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.027E-31   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       41.3       TIME AVG. FORCE        29.9    
+ LARGEST SCALED RESIDUAL FORCE     -3.804E-10   AT NODE         61   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -3.804E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        4.634E-21   AT NODE         11   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1253,32 +965,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  14ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       66.7       TIME AVG. FORCE        51.3    
- LARGEST SCALED RESIDUAL FORCE     -1.907E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.907E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.383E-21   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       239.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      9.756E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       39.2       TIME AVG. FORCE        30.2    
+ LARGEST SCALED RESIDUAL FORCE      3.269E-10   AT NODE         95   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      3.269E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -3.181E-21   AT NODE         52   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1291,32 +994,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  10ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  2ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       63.2       TIME AVG. FORCE        51.7    
- LARGEST SCALED RESIDUAL FORCE      1.918E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.918E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -8.020E-22   AT NODE        100   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       241.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      9.243E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       37.1       TIME AVG. FORCE        30.4    
+ LARGEST SCALED RESIDUAL FORCE      3.376E-10   AT NODE         23   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      3.376E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -4.055E-21   AT NODE          5   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1329,32 +1023,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  7ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       59.7       TIME AVG. FORCE        51.9    
- LARGEST SCALED RESIDUAL FORCE     -1.408E-11   AT NODE        307   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.408E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -5.612E-22   AT NODE        101   DOF  1
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       243.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      8.729E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       35.1       TIME AVG. FORCE        30.5    
+ LARGEST SCALED RESIDUAL FORCE     -4.710E-10   AT NODE         59   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -4.710E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        3.962E-21   AT NODE          4   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1367,32 +1052,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  5ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       56.2       TIME AVG. FORCE        52.0    
- LARGEST SCALED RESIDUAL FORCE     -2.408E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.408E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        5.782E-22   AT NODE        101   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       33.0       TIME AVG. FORCE        30.6    
+ LARGEST SCALED RESIDUAL FORCE      3.160E-10   AT NODE         97   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.160E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -2.074E-21   AT NODE          4   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       244.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      8.216E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1405,32 +1081,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  12ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       52.6       TIME AVG. FORCE        52.0    
- LARGEST SCALED RESIDUAL FORCE     -2.187E-11   AT NODE        263   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.187E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.963E-22   AT NODE        292   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       245.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      7.702E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       30.9       TIME AVG. FORCE        30.6    
+ LARGEST SCALED RESIDUAL FORCE      2.750E-10   AT NODE         23   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.750E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.691E-21   AT NODE          8   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1443,32 +1110,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  2ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  14ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       49.1       TIME AVG. FORCE        52.0    
- LARGEST SCALED RESIDUAL FORCE      1.852E-11   AT NODE        261   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.852E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.723E-22   AT NODE         93   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       28.9       TIME AVG. FORCE        30.6    
+ LARGEST SCALED RESIDUAL FORCE     -3.128E-10   AT NODE         59   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -3.128E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.350E-21   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       245.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      7.189E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1481,32 +1139,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  6ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       45.6       TIME AVG. FORCE        51.8    
- LARGEST SCALED RESIDUAL FORCE      1.716E-11   AT NODE        290   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.716E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        4.579E-22   AT NODE          8   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       26.8       TIME AVG. FORCE        30.5    
+ LARGEST SCALED RESIDUAL FORCE      3.350E-10   AT NODE         61   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      3.350E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -3.133E-21   AT NODE         36   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       245.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      6.675E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1519,32 +1168,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  11ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       42.1       TIME AVG. FORCE        51.5    
- LARGEST SCALED RESIDUAL FORCE     -1.644E-11   AT NODE        263   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.644E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.429E-22   AT NODE         99   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       24.8       TIME AVG. FORCE        30.3    
+ LARGEST SCALED RESIDUAL FORCE      2.455E-10   AT NODE         97   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      2.455E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.976E-21   AT NODE          5   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       244.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      6.162E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1557,32 +1197,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  7ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       38.6       TIME AVG. FORCE        51.2    
- LARGEST SCALED RESIDUAL FORCE     -1.416E-11   AT NODE        308   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.416E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -3.650E-22   AT NODE        107   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       243.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.648E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       22.7       TIME AVG. FORCE        30.1    
+ LARGEST SCALED RESIDUAL FORCE     -3.603E-10   AT NODE         78   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -3.603E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.485E-21   AT NODE         30   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1595,32 +1226,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  9ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       35.1       TIME AVG. FORCE        50.8    
- LARGEST SCALED RESIDUAL FORCE     -2.216E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.216E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        3.756E-22   AT NODE        100   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       20.6       TIME AVG. FORCE        29.9    
+ LARGEST SCALED RESIDUAL FORCE     -3.964E-10   AT NODE         42   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -3.964E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.696E-21   AT NODE         49   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       241.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.135E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1633,32 +1255,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  12ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       31.6       TIME AVG. FORCE        50.3    
- LARGEST SCALED RESIDUAL FORCE      1.801E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.801E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -2.939E-22   AT NODE         91   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       18.6       TIME AVG. FORCE        29.6    
+ LARGEST SCALED RESIDUAL FORCE      4.196E-10   AT NODE         42   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      4.196E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.886E-21   AT NODE         32   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       239.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      4.621E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1671,32 +1284,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  4ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       28.1       TIME AVG. FORCE        49.8    
- LARGEST SCALED RESIDUAL FORCE     -1.296E-11   AT NODE        255   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.296E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.891E-22   AT NODE         93   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       16.5       TIME AVG. FORCE        29.3    
+ LARGEST SCALED RESIDUAL FORCE     -2.442E-10   AT NODE         42   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.442E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -2.863E-21   AT NODE         12   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       237.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      4.108E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1709,32 +1313,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
+        NUMBER OF FLOPS:      1.292e+07
         SOLVER ELAPSED TIME:  8ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       24.6       TIME AVG. FORCE        49.2    
- LARGEST SCALED RESIDUAL FORCE      1.044E-11   AT NODE        306   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.044E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.944E-22   AT NODE         99   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       234.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      3.594E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       14.5       TIME AVG. FORCE        29.0    
+ LARGEST SCALED RESIDUAL FORCE      2.961E-10   AT NODE         94   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.961E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        2.576E-21   AT NODE         12   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1747,32 +1342,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  2ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  11ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       21.1       TIME AVG. FORCE        48.6    
- LARGEST SCALED RESIDUAL FORCE     -1.373E-11   AT NODE        257   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.373E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.022E-22   AT NODE          7   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       232.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      3.081E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       12.4       TIME AVG. FORCE        28.6    
+ LARGEST SCALED RESIDUAL FORCE      2.928E-10   AT NODE         80   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE      2.928E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -8.806E-22   AT NODE         12   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1785,32 +1371,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  3ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  17ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       17.6       TIME AVG. FORCE        47.9    
- LARGEST SCALED RESIDUAL FORCE      2.041E-11   AT NODE        290   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      2.041E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        3.210E-22   AT NODE        105   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       10.3       TIME AVG. FORCE        28.2    
+ LARGEST SCALED RESIDUAL FORCE     -2.184E-10   AT NODE        137   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.184E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.475E-21   AT NODE          6   DOF  1
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       229.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      2.567E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1823,32 +1400,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  13ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       14.1       TIME AVG. FORCE        47.2    
- LARGEST SCALED RESIDUAL FORCE     -1.600E-11   AT NODE        263   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.600E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.       -4.217E-22   AT NODE        104   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       225.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      2.054E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       8.28       TIME AVG. FORCE        27.7    
+ LARGEST SCALED RESIDUAL FORCE     -2.425E-10   AT NODE        148   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -2.425E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.680E-21   AT NODE          6   DOF  1
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1861,32 +1429,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  10ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  14ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       10.6       TIME AVG. FORCE        46.4    
- LARGEST SCALED RESIDUAL FORCE     -2.289E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.289E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        1.395E-22   AT NODE        110   DOF  3
-   INSTANCE: GBS-1                                                                           
-          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       222.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.540E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
+ AVERAGE FORCE                       6.22       TIME AVG. FORCE        27.3    
+ LARGEST SCALED RESIDUAL FORCE     -2.561E-10   AT NODE        135   DOF  3
    INSTANCE: TOWER-1                                                                         
-          THERE IS ZERO MOMENT    EVERYWHERE
+  CORRESPONDING RESIDUAL FORCE     -2.561E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -1.504E-21   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+          THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1899,32 +1458,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  4ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  16ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       7.09       TIME AVG. FORCE        45.6    
- LARGEST SCALED RESIDUAL FORCE      1.581E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE      1.581E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.793E-22   AT NODE         99   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       4.17       TIME AVG. FORCE        26.8    
+ LARGEST SCALED RESIDUAL FORCE      2.499E-10   AT NODE         42   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      2.499E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.368E-21   AT NODE          4   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       218.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.027E-32   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1937,32 +1487,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  11ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                       1.04       TIME AVG. FORCE        44.7    
- LARGEST SCALED RESIDUAL FORCE     -2.230E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -2.230E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        2.273E-22   AT NODE        100   DOF  1
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                       1.19       TIME AVG. FORCE        26.3    
+ LARGEST SCALED RESIDUAL FORCE      2.854E-10   AT NODE         73   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE      2.854E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.       -8.996E-22   AT NODE          4   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THE FORCE     EQUILIBRIUM RESPONSE WAS LINEAR IN THIS INCREMENT
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       214.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -1975,32 +1516,23 @@
  
 	SYMMETRIC PURE THREAD-BASED DIRECT SPARSE SOLVER RUNNING ON
  	1 HOST x 1 MPI RANK PER HOST x 1 THREAD PER RANK
-        NUMBER OF EQUATIONS:  1518
+        NUMBER OF EQUATIONS:  1386
         NUMBER OF RHS:        1
-        NUMBER OF FLOPS:      1.286e+07
-        SOLVER ELAPSED TIME:  7ms
+        NUMBER OF FLOPS:      1.292e+07
+        SOLVER ELAPSED TIME:  3ms
 
                CONVERGENCE CHECKS FOR EQUILIBRIUM ITERATION     1
 
 
- AVERAGE FORCE                      8.834E-14   TIME AVG. FORCE        44.7    
- LARGEST SCALED RESIDUAL FORCE     -1.556E-11   AT NODE        260   DOF  3
-   INSTANCE: GBS-1                                                                           
-  CORRESPONDING RESIDUAL FORCE     -1.556E-11
- LARGEST INCREMENT OF DISP.        -2.292E-07   AT NODE        103   DOF  3
-   INSTANCE: GBS-1                                                                           
- LARGEST CORRECTION TO DISP.        3.099E-22   AT NODE        307   DOF  3
-   INSTANCE: GBS-1                                                                           
+ AVERAGE FORCE                      1.688E-12   TIME AVG. FORCE        26.3    
+ LARGEST SCALED RESIDUAL FORCE     -2.190E-10   AT NODE         36   DOF  3
+   INSTANCE: TOWER-1                                                                         
+  CORRESPONDING RESIDUAL FORCE     -2.190E-10
+ LARGEST INCREMENT OF DISP.        -4.723E-07   AT NODE          7   DOF  3
+   INSTANCE: TOWER-1                                                                         
+ LARGEST CORRECTION TO DISP.        1.091E-21   AT NODE         46   DOF  3
+   INSTANCE: TOWER-1                                                                         
           THERE IS ZERO FORCE     EVERYWHERE
-
- AVERAGE MOMENT                      0.00       TIME AVG. MOMENT       210.    
-                                                (FROM FORCE     FIELD)
- ALL MOMENT    RESIDUALS ARE ZERO
- LARGEST INCREMENT OF ROTATION      1.187E-66   AT NODE          1   DOF  6
-   INSTANCE: {assembly node}                                                                 
- LARGEST CORRECTION TO ROTATION    -5.135E-33   AT NODE          1   DOF  4
-   INSTANCE: {assembly node}                                                                 
-          THERE IS ZERO MOMENT    EVERYWHERE
 
  ITERATION SUMMARY FOR THE INCREMENT:   1 TOTAL ITERATIONS, OF WHICH
    0 ARE SEVERE DISCONTINUITY ITERATIONS AND  1 ARE EQUILIBRIUM ITERATIONS.
@@ -2023,8 +1555,8 @@
                        1  REORDERING OF EQUATIONS TO MINIMIZE WAVEFRONT
                        0  ADDITIONAL RESIDUAL EVALUATIONS FOR LINE SEARCHES
                        0  ADDITIONAL OPERATOR EVALUATIONS FOR LINE SEARCHES
-                       1  WARNING MESSAGES DURING USER INPUT PROCESSING
-                       1  WARNING MESSAGES DURING ANALYSIS
+                       2  WARNING MESSAGES DURING USER INPUT PROCESSING
+                       0  WARNING MESSAGES DURING ANALYSIS
                        0  ANALYSIS WARNINGS ARE NUMERICAL PROBLEM MESSAGES
                        0  ANALYSIS WARNINGS ARE NEGATIVE EIGENVALUE MESSAGES
                        0  ERROR MESSAGES
@@ -2032,8 +1564,8 @@
 
 
      JOB TIME SUMMARY
-       USER TIME (SEC)      =      17.    
-       SYSTEM TIME (SEC)    =      6.7    
-       TOTAL CPU TIME (SEC) =      24.    
-       WALLCLOCK TIME (SEC) =           11
+       USER TIME (SEC)      =      13.    
+       SYSTEM TIME (SEC)    =      5.3    
+       TOTAL CPU TIME (SEC) =      19.    
+       WALLCLOCK TIME (SEC) =            8
        MEMORY PEAK (GB)     =            0
