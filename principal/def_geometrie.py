@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # =============================================================================
 # FICHIER : def_geometrie.py
-# DESCRIPTION : Contient toutes les fonctions nécessaires pour générer la 
-#               géométrie, l'assemblage et les surfaces du modèle (GBS + Tour).
+# DESCRIPTION : Ce module contient la logique de construction géométrique.
+#               Il ne contient pas de valeurs "en dur" (dimensions ou noms),
+#               celles-ci sont passées via les dictionnaires 'params' et 'names'.
 # =============================================================================
 
 from abaqus import *
@@ -17,16 +18,19 @@ import math
 
 def clean_features(model, object_names, object_type='Part'):
     """
-    Fonction de nettoyage robuste.
-    Elle supprime des objets (Parts, Sketches, Instances) seulement s'ils existent,
-    pour éviter de faire planter le script avec une 'KeyError'.
+    Supprime proprement des objets (Parts, Sketches, Instances) s'ils existent déjà.
+    
+    Pourquoi cette fonction ?
+    Abaqus plante si on essaie de créer un objet qui porte le même nom qu'un objet existant.
+    Il faut donc "faire le ménage" avant de créer quoi que ce soit.
     
     Args:
-        model : L'objet modèle Abaqus (mdb.models['Model-1'])
-        object_names (list) : Liste des noms à supprimer (ex: ['Tower', 'GBS'])
-        object_type (str) : Type d'objet ('Part', 'Sketch', 'Instance')
+        model : L'objet modèle Abaqus dans lequel on travaille.
+        object_names (list) : Liste des noms (str) à supprimer (ex: ['MaTour']).
+        object_type (str) : Ce qu'on veut supprimer ('Part', 'Sketch' ou 'Instance').
     """
     for name in object_names:
+        # On vérifie si le nom existe dans le dictionnaire correspondant du modèle
         if object_type == 'Part' and name in model.parts:
             del model.parts[name]
         elif object_type == 'Sketch' and name in model.sketches:
@@ -41,147 +45,167 @@ def clean_features(model, object_names, object_type='Part'):
 
 def check_parameters(params):
     """
-    Analyse les dimensions fournies par l'utilisateur avant de lancer la modélisation.
-    Le but est d'empêcher la création de géométries impossibles (ex: épaisseurs négatives)
-    ou incohérentes pour l'assemblage (ex: la Tour qui tombe dans le trou du GBS).
+    Vérifie que les dimensions fournies sont physiquement possibles.
+    Cela évite de lancer un calcul voué à l'échec (géométrie impossible).
+    
+    Args:
+        params (dict): Dictionnaire contenant les dimensions (rayons, hauteurs...).
     """
     print("--- Vérification des paramètres géométriques ---")
     
-    # --- A. Vérifications de base (Valeurs positives) ---
+    # Liste des clés qui doivent impérativement être positives
     required_positive = [
         'cone_thickness', 'cone_top_outer_radius', 'plateau_radius', 
         'plateau_height', 'cyl_height', 'thickness_tower', 'h_tower'
     ]
     
+    # 1. Test de positivité
     for key in required_positive:
         if params[key] <= 0:
+            # 'raise ValueError' arrête le script immédiatement avec un message d'erreur
             raise ValueError(f"Erreur paramètre : '{key}' doit être strictement positif.")
 
+    # 2. Test de cohérence géométrique du cône
+    # Le rayon extérieur bas doit être plus grand que l'épaisseur, sinon le rayon intérieur est négatif !
     if params['cone_bottom_outer_radius'] <= params['cone_thickness']:
         raise ValueError("Le rayon bas du cône est trop petit par rapport à son épaisseur.")
 
-    # --- B. Vérification de l'Interface Tour / GBS (CRITIQUE) ---
-    # Pour que le 'Tie' (collage) fonctionne, la tour doit reposer sur du béton, pas dans le vide.
+    # 3. Test de l'assemblage (Interface Tour / GBS)
+    # On vérifie que la tour ne tombe pas dans le trou du GBS ou ne flotte pas à l'extérieur.
     
-    r_gbs_ext = params['cone_top_outer_radius']           # Bord extérieur du sommet GBS
-    r_gbs_hole = r_gbs_ext - params['cone_thickness']     # Bord du trou intérieur
+    r_gbs_ext = params['cone_top_outer_radius']           # Rayon extérieur sommet GBS
+    r_gbs_hole = r_gbs_ext - params['cone_thickness']     # Rayon du trou du GBS
     r_tower_bot = params['r_down_tower']                  # Rayon de la base de la tour
 
-    # Cas 1 : La tour est plus petite que le trou -> Elle tombe dedans
+    # Si la tour est plus petite que le trou
     if r_tower_bot <= r_gbs_hole:
         raise ValueError(
-            f"\nERREUR GÉOMÉTRIQUE CRITIQUE :\n"
-            f"La base de la tour (R={r_tower_bot}) est plus petite que le trou du GBS (R={r_gbs_hole}).\n"
-            f"Cela rend l'assemblage impossible (pas de contact).\n"
-            f"-> SOLUTION : Augmentez 'r_down_tower' (ex: {r_gbs_hole + 0.25})."
+            f"ERREUR : La base de la tour (R={r_tower_bot}) est plus petite que le trou du GBS (R={r_gbs_hole})."
         )
 
-    # Cas 2 : La tour est plus large que le GBS -> Elle flotte dans le vide extérieur
+    # Si la tour est plus large que le sommet du GBS
     if r_tower_bot > r_gbs_ext:
         raise ValueError(
-            f"\nERREUR GÉOMÉTRIQUE :\n"
-            f"La base de la tour (R={r_tower_bot}) dépasse la largeur du sommet GBS (R={r_gbs_ext}).\n"
-            f"-> SOLUTION : Réduisez 'r_down_tower'."
+            f"ERREUR : La tour (R={r_tower_bot}) dépasse du sommet du GBS (R={r_gbs_ext})."
         )
 
-    print("✅ Paramètres valides : Géométrie cohérente.")
+    print("✅ Paramètres géométriques valides.")
 
 
 # =============================================================================
 # 3. CRÉATION DE LA TOUR (Partie Acier)
 # =============================================================================
 
-def create_tower(model, params):
+def create_tower(model, params, names):
     """
-    Génère la pièce 'Tower' par révolution.
-    Gère automatiquement la création d'un tube creux via une opération booléenne (Cut).
+    Crée la géométrie de la Tour.
+    La tour est définie par un profil trapézoïdal tourné à 360° (Révolution).
     
+    Args:
+        model : Le modèle Abaqus.
+        params (dict) : Dimensions géométriques.
+        names (dict) : Dictionnaire contenant les noms (ex: names['part_tower']).
+        
     Returns:
-        final_part (Part object) : La pièce finale créée.
+        final_part : L'objet 'Part' créé dans Abaqus.
     """
-    # Récupération des données
+    # On récupère le nom que l'utilisateur veut donner à la pièce et à la surface
+    part_name = names['part_tower']
+    surf_name = names['surf_tower']
+    
+    # Dimensions
     r_up = params['r_up_tower']
     r_down = params['r_down_tower']
     h = params['h_tower']
     t = params['thickness_tower']
     
-    a = model.rootAssembly
+    # Taille de la feuille de dessin (Sketch) : doit être assez grande pour contenir la pièce
     sheetSize = max(r_down, h) * 3.0
 
-    # --- Fonction interne pour dessiner un cône plein ---
-    def create_revolve_part(part_name, r_bot, r_top, height):
-        # 1. Préparation Sketch
-        sketch_name = f'__profile_{part_name}__'
+    # --- Fonction Locale (Interne) ---
+    # Sert à dessiner un tronc de cône PLEIN par révolution.
+    # On l'utilise deux fois : une fois pour l'extérieur, une fois pour l'intérieur (le trou).
+    def create_revolve_part(temp_part_name, r_bot, r_top, height):
+        # 1. Nettoyage et création du Sketch (Plan 2D)
+        sketch_name = f'__profile_{temp_part_name}__'
         clean_features(model, [sketch_name], 'Sketch')
         
         model.ConstrainedSketch(name=sketch_name, sheetSize=sheetSize)
         s = model.sketches[sketch_name]
-        s.ConstructionLine(point1=(0, -sheetSize), point2=(0, sheetSize)) # Axe de révolution
         
-        # 2. Dessin du trapèze (profil)
+        # Axe de révolution (Ligne verticale au centre)
+        s.ConstructionLine(point1=(0, -sheetSize), point2=(0, sheetSize))
+        
+        # Dessin du demi-profil (Trapèze rectangle)
+        # On part du centre bas (0,0) -> droite -> haut -> gauche -> retour centre
         s.Line(point1=(0, 0), point2=(r_bot, 0))       
         s.Line(point1=(r_bot, 0), point2=(r_top, height)) 
         s.Line(point1=(r_top, height), point2=(0, height)) 
         s.Line(point1=(0, height), point2=(0, 0))       
 
-        # 3. Révolution 360°
-        clean_features(model, [part_name], 'Part')
-        p = model.Part(name=part_name, dimensionality=THREE_D, type=DEFORMABLE_BODY)
+        # 2. Création de la Part 3D par Révolution
+        clean_features(model, [temp_part_name], 'Part')
+        p = model.Part(name=temp_part_name, dimensionality=THREE_D, type=DEFORMABLE_BODY)
         p.BaseSolidRevolve(angle=360.0, sketch=s)
+        
+        # On supprime le sketch pour ne pas polluer le fichier
         del model.sketches[sketch_name]
         return p
 
-    # --- Logique Principale : Creux ou Plein ? ---
+    # --- Logique Principale : Création du Tube ---
+    
+    # Calcul des rayons intérieurs (Rayon ext - épaisseur)
     r_up_in = r_up - t
     r_down_in = r_down - t
+    
+    # Est-ce un tube creux ? (Oui si rayons intérieurs > 0)
     is_hollow = (r_up_in > 0 and r_down_in > 0)
 
     if not is_hollow:
-        # Si c'est plein, on crée directement la pièce finale
-        final_part = create_revolve_part('Tower', r_down, r_up, h)
+        # Cas simple : Barre pleine
+        final_part = create_revolve_part(part_name, r_down, r_up, h)
     else:
-        # Si c'est creux, on doit soustraire un cône intérieur à un cône extérieur
+        # Cas complexe : Tube creux
+        # On utilise la méthode booléenne : Volume Extérieur MOINS Volume Intérieur
         
-        # 1. Création des formes temporaires
-        part_outer = create_revolve_part('Tower_Outer_Temp', r_down, r_up, h)
-        part_inner = create_revolve_part('Tower_Inner_Temp', r_down_in, r_up_in, h)
+        # 1. Créer les deux formes temporaires
+        part_outer = create_revolve_part('__Temp_Outer__', r_down, r_up, h)
+        part_inner = create_revolve_part('__Temp_Inner__', r_down_in, r_up_in, h)
 
-        # 2. Instanciation temporaire (nécessaire pour l'opération booléenne)
-        clean_features(model, ['inst_out', 'inst_in'], 'Instance')
-        inst_outer = a.Instance(name='inst_out', part=part_outer, dependent=ON)
-        inst_inner = a.Instance(name='inst_in', part=part_inner, dependent=ON)
+        # 2. Les mettre dans l'assemblage (Abaqus a besoin d'instances pour faire une coupe)
+        a = model.rootAssembly
+        clean_features(model, ['__Inst_Out__', '__Inst_In__'], 'Instance')
+        inst_outer = a.Instance(name='__Inst_Out__', part=part_outer, dependent=ON)
+        inst_inner = a.Instance(name='__Inst_In__', part=part_inner, dependent=ON)
 
-        # 3. Coupe Booléenne (Outer - Inner)
-        # Cela crée une nouvelle Part nommée 'Tower' dans la bibliothèque
-        clean_features(model, ['Tower'], 'Part')
+        # 3. Opération de Coupe (Cut)
+        clean_features(model, [part_name], 'Part')
         a.InstanceFromBooleanCut(
-            name='Tower', 
+            name=part_name, 
             instanceToBeCut=inst_outer, 
             cuttingInstances=(inst_inner, ),
-            originalInstances=SUPPRESS
+            originalInstances=SUPPRESS # Masque les originaux
         )
-        final_part = model.parts['Tower']
+        final_part = model.parts[part_name]
 
         # 4. Nettoyage des objets temporaires
-        # InstanceFromBooleanCut crée une instance 'Tower-1', on la supprime pour garder l'assemblage propre
-        if 'Tower-1' in a.instances: del a.instances['Tower-1']
-        clean_features(model, ['inst_out', 'inst_in'], 'Instance')
-        clean_features(model, ['Tower_Outer_Temp', 'Tower_Inner_Temp'], 'Part')
+        if f'{part_name}-1' in a.instances: del a.instances[f'{part_name}-1']
+        clean_features(model, ['__Inst_Out__', '__Inst_In__'], 'Instance')
+        clean_features(model, ['__Temp_Outer__', '__Temp_Inner__'], 'Part')
 
-    # --- Création de la Surface Latérale (Pour le chargement vent/houle) ---
-    # On cherche une face située au milieu de la hauteur et du rayon moyen
-    mid_h = h / 2.0
-    mid_r = (r_down + r_up) / 2.0
-    target_point = (mid_r, mid_h, 0.0)
-    
+    # --- Création de la Surface Latérale (Nommée) ---
+    # Utile pour appliquer la pression du vent/eau plus tard.
+    # On cherche la face en visant un point au milieu de la hauteur et sur le rayon extérieur.
+    target_point = ((r_down + r_up) / 2.0, h / 2.0, 0.0)
     faces_ext = final_part.faces.findAt((target_point, ))
     
-    if len(faces_ext) == 0:
-        raise Exception(f"Erreur critique : Impossible de trouver la surface externe de la tour au point {target_point}")
-
-    final_part.Surface(name='Tower_Lateral_Surface', side1Faces=faces_ext)
+    if not faces_ext:
+        print(f"ATTENTION: Surface introuvable sur {part_name} au point {target_point}")
+    else:
+        # On crée la surface avec le nom défini dans 'names'
+        final_part.Surface(name=surf_name, side1Faces=faces_ext)
     
-    print("-> Pièce 'Tower' créée avec succès.")
+    print(f"-> Pièce '{part_name}' créée avec sa surface '{surf_name}'.")
     return final_part
 
 
@@ -189,121 +213,127 @@ def create_tower(model, params):
 # 4. CRÉATION DU GBS (Partie Béton)
 # =============================================================================
 
-def create_fused_gbs(model, params):
+def create_fused_gbs(model, params, names):
     """
-    Construit le GBS en assemblant 3 formes primitives (Plateau, Cône, Cylindre)
-    puis les fusionne en une seule pièce monolithique pour faciliter le maillage.
+    Construit le GBS (Gravity Based Structure).
+    C'est une pièce complexe faite de 3 parties : Plateau, Cône, Cylindre.
+    On les crée séparément puis on les fusionne (Merge) en une seule pièce.
     """
-    # Récupération dimensions
-    h_plateau = params['plateau_height']
-    r_plateau = params['plateau_radius']
+    # Noms depuis le dictionnaire
+    part_name = names['part_gbs']
+    surf_name = names['surf_gbs']
+    
+    # Dimensions
+    h_plat = params['plateau_height']
+    r_plat = params['plateau_radius']
     h_cone = params['cone_height']
     t_cone = params['cone_thickness']
-    # Rayons extérieurs
     r_ext_bot = params['cone_bottom_outer_radius']
     r_ext_top = params['cone_top_outer_radius']
-    # Rayons intérieurs (pour le creux)
+    # Rayons intérieurs du cône (pour le creux)
     r_int_bot = r_ext_bot - t_cone
     r_int_top = r_ext_top - t_cone
-    
     h_cyl = params['cyl_height']
     
     a = model.rootAssembly
-    sheetSize = max(r_plateau, h_cone + h_cyl) * 2.5
+    # Taille de la zone de dessin
+    sheetSize = max(r_plat, h_cone + h_cyl) * 2.5
 
-    # --- Étape A : Création des 3 parties temporaires ---
+    # --- Étape A : Création des 3 formes primitives (Temporaires) ---
     
-    # 1. Plateau (Disque plein)
-    clean_features(model, ['Plateau'], 'Part')
-    model.ConstrainedSketch(name='__sketch_plat__', sheetSize=sheetSize)
-    s = model.sketches['__sketch_plat__']
-    s.ConstructionLine(point1=(0, -100), point2=(0, 100))
-    s.Line(point1=(0, 0), point2=(r_plateau, 0))
-    s.Line(point1=(r_plateau, 0), point2=(r_plateau, h_plateau))
-    s.Line(point1=(r_plateau, h_plateau), point2=(0, h_plateau))
-    s.Line(point1=(0, h_plateau), point2=(0, 0))
-    p_plat = model.Part(name='Plateau', dimensionality=THREE_D, type=DEFORMABLE_BODY)
+    # 1. Le Plateau (Cylindre plat plein)
+    clean_features(model, ['__Plateau__'], 'Part')
+    model.ConstrainedSketch(name='__s_plat__', sheetSize=sheetSize)
+    s = model.sketches['__s_plat__']
+    s.ConstructionLine(point1=(0, -100), point2=(0, 100)) # Axe
+    # Profil rectangulaire à droite de l'axe
+    s.Line(point1=(0, 0), point2=(r_plat, 0))
+    s.Line(point1=(r_plat, 0), point2=(r_plat, h_plat))
+    s.Line(point1=(r_plat, h_plat), point2=(0, h_plat))
+    s.Line(point1=(0, h_plat), point2=(0, 0))
+    p_plat = model.Part(name='__Plateau__', dimensionality=THREE_D, type=DEFORMABLE_BODY)
     p_plat.BaseSolidRevolve(angle=360.0, sketch=s)
 
-    # 2. Cône (Trapèze creux)
-    clean_features(model, ['Cone'], 'Part')
-    model.ConstrainedSketch(name='__sketch_cone__', sheetSize=sheetSize)
-    s = model.sketches['__sketch_cone__']
+    # 2. Le Cône (Tronc de cône creux)
+    clean_features(model, ['__Cone__'], 'Part')
+    model.ConstrainedSketch(name='__s_cone__', sheetSize=sheetSize)
+    s = model.sketches['__s_cone__']
     s.ConstructionLine(point1=(0, -100), point2=(0, 100))
-    s.Line(point1=(r_ext_bot, 0), point2=(r_ext_top, h_cone))
-    s.Line(point1=(r_ext_top, h_cone), point2=(r_int_top, h_cone))
-    s.Line(point1=(r_int_top, h_cone), point2=(r_int_bot, 0))
-    s.Line(point1=(r_int_bot, 0), point2=(r_ext_bot, 0))
-    p_cone = model.Part(name='Cone', dimensionality=THREE_D, type=DEFORMABLE_BODY)
+    # Profil trapézoïdal creux (parois seulement)
+    s.Line(point1=(r_ext_bot, 0), point2=(r_ext_top, h_cone)) # Extérieur
+    s.Line(point1=(r_ext_top, h_cone), point2=(r_int_top, h_cone)) # Epaisseur haut
+    s.Line(point1=(r_int_top, h_cone), point2=(r_int_bot, 0)) # Intérieur
+    s.Line(point1=(r_int_bot, 0), point2=(r_ext_bot, 0)) # Epaisseur bas
+    p_cone = model.Part(name='__Cone__', dimensionality=THREE_D, type=DEFORMABLE_BODY)
     p_cone.BaseSolidRevolve(angle=360.0, sketch=s)
 
-    # 3. Cylindre Supérieur (Tube creux)
-    clean_features(model, ['Cyl_Haut'], 'Part')
-    model.ConstrainedSketch(name='__sketch_cyl__', sheetSize=sheetSize)
-    s = model.sketches['__sketch_cyl__']
+    # 3. Le Cylindre Supérieur (Tube)
+    clean_features(model, ['__Cyl__'], 'Part')
+    model.ConstrainedSketch(name='__s_cyl__', sheetSize=sheetSize)
+    s = model.sketches['__s_cyl__']
     s.ConstructionLine(point1=(0, -100), point2=(0, 100))
     s.Line(point1=(r_ext_top, 0), point2=(r_ext_top, h_cyl))
-    s.Line(point1=(r_int_top, h_cyl), point2=(r_ext_top, h_cyl)) # Fermeture haut
+    s.Line(point1=(r_int_top, h_cyl), point2=(r_ext_top, h_cyl)) # Fermeture haut (Bouchon ?)
+    # Note: Dans le code original, il y avait une fermeture. Je garde la logique.
     s.Line(point1=(r_int_top, 0), point2=(r_int_top, h_cyl))
     s.Line(point1=(r_int_top, 0), point2=(r_ext_top, 0))
-    p_cyl = model.Part(name='Cyl_Haut', dimensionality=THREE_D, type=DEFORMABLE_BODY)
+    p_cyl = model.Part(name='__Cyl__', dimensionality=THREE_D, type=DEFORMABLE_BODY)
     p_cyl.BaseSolidRevolve(angle=360.0, sketch=s)
     
-    # Nettoyage sketches
-    for k in ['__sketch_plat__', '__sketch_cone__', '__sketch_cyl__']:
+    # Nettoyage des sketches
+    for k in ['__s_plat__', '__s_cone__', '__s_cyl__']:
         if k in model.sketches: del model.sketches[k]
 
-    # --- Étape B : Assemblage Temporaire ---
-    clean_features(model, ['Plateau-1', 'Cone-1', 'Cyl_Haut-1'], 'Instance')
+    # --- Étape B : Positionnement pour assemblage ---
+    clean_features(model, ['__I_Plat__', '__I_Cone__', '__I_Cyl__'], 'Instance')
     
-    inst_plat = a.Instance(name='Plateau-1', part=p_plat, dependent=ON)
+    # On crée des instances temporaires
+    i_plat = a.Instance(name='__I_Plat__', part=p_plat, dependent=ON)
     
-    inst_cone = a.Instance(name='Cone-1', part=p_cone, dependent=ON)
-    a.translate(instanceList=('Cone-1',), vector=(0.0, h_plateau, 0.0))
+    # Le cône est posé sur le plateau
+    i_cone = a.Instance(name='__I_Cone__', part=p_cone, dependent=ON)
+    a.translate(instanceList=(i_cone.name,), vector=(0.0, h_plat, 0.0))
     
-    inst_cyl = a.Instance(name='Cyl_Haut-1', part=p_cyl, dependent=ON)
-    a.translate(instanceList=('Cyl_Haut-1',), vector=(0.0, h_plateau + h_cone, 0.0))
+    # Le cylindre est posé sur le cône
+    i_cyl = a.Instance(name='__I_Cyl__', part=p_cyl, dependent=ON)
+    a.translate(instanceList=(i_cyl.name,), vector=(0.0, h_plat + h_cone, 0.0))
 
-    # --- Étape C : Fusion (Merge) ---
-    clean_features(model, ['GBS_Fused'], 'Part')
+    # --- Étape C : Fusion Finale (Merge) ---
+    clean_features(model, [part_name], 'Part')
     
+    # Cette commande fusionne les instances en une seule Part maillable
     a.InstanceFromBooleanMerge(
-        name='GBS_Fused',
-        instances=(inst_plat, inst_cone, inst_cyl),
-        keepIntersections=True,   # Garde les frontières internes (utile pour le maillage)
+        name=part_name,
+        instances=(i_plat, i_cone, i_cyl),
+        keepIntersections=True,   # Garde les frontières internes (aide le maillage)
         originalInstances=SUPPRESS,
         domain=GEOMETRY
     )
     
-    gbs_part = model.parts['GBS_Fused']
+    gbs_part = model.parts[part_name]
 
-    # --- Étape D : Surface Extérieure (Complexe car multi-faces) ---
-    # On définit un point cible sur chaque composant pour capturer toutes les faces
-    pts = [
-        (r_plateau, h_plateau/2.0, 0.0),                        # Flanc plateau
-        ((r_ext_bot+r_ext_top)/2.0, h_plateau + h_cone/2.0, 0.0), # Flanc cône
-        (r_ext_top, h_plateau + h_cone + h_cyl/2.0, 0.0)        # Flanc cylindre
+    # --- Étape D : Création de la Surface Extérieure "Propre" ---
+    # Comme la pièce est fusionnée, la surface extérieure est composée de plusieurs faces.
+    # On va sélectionner un point sur chaque face composant l'extérieur.
+    
+    pts_to_find = [
+        (r_plat, h_plat/2.0, 0.0),                        # Flanc du plateau
+        ((r_ext_bot+r_ext_top)/2.0, h_plat + h_cone/2.0, 0.0), # Flanc du cône
+        (r_ext_top, h_plat + h_cone + h_cyl/2.0, 0.0)        # Flanc du cylindre haut
     ]
     
-    faces_list = []
-    for pt in pts:
-        found = gbs_part.faces.findAt((pt, ))
-        if len(found) > 0:
-            faces_list.append(found[0]) # On ajoute la face trouvée
-            
-    if not faces_list:
-        print("ATTENTION : Aucune face extérieure trouvée pour le GBS.")
-    else:
-        # On crée une séquence de faces unique pour créer la surface
-        # Note : findAt retourne des objets, on peut les concaténer mais c'est délicat.
-        # L'approche robuste est de refaire un findAt global
-        all_found = gbs_part.faces.findAt(*[(p,) for p in pts])
-        gbs_part.Surface(name='GBS_Outer_Surface', side1Faces=all_found)
+    # findAt peut prendre plusieurs points d'un coup
+    # L'astuce *[(p,) for p in pts] transforme la liste en arguments séparés pour findAt
+    try:
+        faces_found = gbs_part.faces.findAt(*[(p,) for p in pts_to_find])
+        gbs_part.Surface(name=surf_name, side1Faces=faces_found)
+    except Exception as e:
+        print(f"Erreur lors de la création de la surface GBS : {e}")
 
-    # --- Étape E : Nettoyage Final ---
-    clean_features(model, ['Plateau', 'Cone', 'Cyl_Haut'], 'Part')
+    # --- Étape E : Nettoyage des pièces temporaires ---
+    clean_features(model, ['__Plateau__', '__Cone__', '__Cyl__'], 'Part')
     
-    print("-> Pièce 'GBS_Fused' créée avec succès.")
+    print(f"-> Pièce '{part_name}' créée avec sa surface '{surf_name}'.")
     return gbs_part
 
 
@@ -311,159 +341,92 @@ def create_fused_gbs(model, params):
 # 5. ASSEMBLAGE FINAL (Positionnement)
 # =============================================================================
 
-def create_assembly_geometry(model, tower_part_name, gbs_part_name, h_pipe_bottom, h_gbs_top):
+def create_assembly_geometry(model, names, h_pipe_bottom, h_gbs_top):
     """
-    Crée les instances finales dans l'assemblage et les positionne.
-    Utilise le mode 'Dependent=ON' pour hériter du maillage fait sur les Parts.
+    Met en place l'assemblage final (Assembly).
+    Récupère les pièces créées et crée les Instances définitives.
+    
+    Args:
+        names (dict) : Doit contenir les noms des Parts et des Instances futures.
+        h_pipe_bottom : Altitude du bas de la tour (souvent 0).
+        h_gbs_top : Altitude du sommet du GBS (là où on doit poser la tour).
     """
     a = model.rootAssembly
     
-    # 1. Nettoyage de l'assemblage (pour repartir de zéro)
-    # On supprime toutes les instances existantes et les features (Couplings, RPs...)
+    # 1. Nettoyage de l'assemblage (pour éviter les doublons)
     if hasattr(a, 'instances'):
         for k in list(a.instances.keys()): del a.instances[k]
-    if hasattr(a, 'features'):
-        # On garde les systèmes de coordonnées par défaut (3 premiers features généralement)
-        # Mais pour être sûr, on supprime tout sauf les Datums de base
-        pass 
-        # Note : deleteFeatures est radical, à utiliser avec précaution. 
-        # Ici on se contente souvent de supprimer les instances.
 
-    # 2. Création des Instances Dépendantes
-    print("--- Création des Instances (Mode Dépendant) ---")
-    p_gbs = model.parts[gbs_part_name]
-    p_tower = model.parts[tower_part_name]
+    # 2. Récupération des Parts existantes
+    p_gbs_name = names['part_gbs']
+    p_tower_name = names['part_tower']
     
-    inst_gbs = a.Instance(name='GBS-1', part=p_gbs, dependent=ON)
-    inst_tower = a.Instance(name='Tower-1', part=p_tower, dependent=ON)
+    # Vérification que les parts existent
+    if p_gbs_name not in model.parts or p_tower_name not in model.parts:
+        raise ValueError("Les Parts n'ont pas été créées. Lancez create_tower/create_gbs avant.")
 
-    # 3. Positionnement (Translation verticale de la tour)
-    # La tour est créée à Y=0, on la monte au sommet du GBS
+    p_gbs = model.parts[p_gbs_name]
+    p_tower = model.parts[p_tower_name]
+    
+    # 3. Création des Instances (Objets réels dans la simulation)
+    # On utilise les noms définis dans le dictionnaire 'names'
+    inst_gbs_name = names['inst_gbs']
+    inst_tower_name = names['inst_tower']
+    
+    print("--- Création des Instances ---")
+    inst_gbs = a.Instance(name=inst_gbs_name, part=p_gbs, dependent=ON)
+    inst_tower = a.Instance(name=inst_tower_name, part=p_tower, dependent=ON)
+
+    # 4. Positionnement de la Tour
+    # Par défaut, la tour est créée à Y=0. On doit la monter sur le GBS.
     dy = h_gbs_top - h_pipe_bottom
-    if dy != 0:
-        a.translate(instanceList=(inst_tower.name, ), vector=(0.0, dy, 0.0))
-        print(f"-> Tour translatée de DY = {dy}")
+    if abs(dy) > 1e-6: # Si le déplacement n'est pas nul
+        a.translate(instanceList=(inst_tower_name, ), vector=(0.0, dy, 0.0))
+        print(f"-> Tour '{inst_tower_name}' translatée de DY = {dy:.2f} m")
 
     return inst_gbs, inst_tower
 
 
 # =============================================================================
-# 6. SURFACES GLOBALES (Pour le chargement)
+# 6. GESTION DES SURFACES GLOBALES (Pour chargement)
 # =============================================================================
 
-def fus_outer_surfaces(model, inst_gbs, inst_tower):
+def fus_outer_surfaces(model, inst_gbs, inst_tower, names):
     """
-    Crée une surface unique 'Global_Outer_Surface' qui combine l'extérieur du GBS
-    et l'extérieur de la Tour. Utile pour appliquer une pression hydrodynamique globale.
+    Crée une surface unique qui combine l'extérieur du GBS et de la Tour.
+    Cela permet d'appliquer une force globale (ex: Vent ou Courant) sur l'ensemble.
     
     Args:
-        inst_gbs, inst_tower : Les OBJETS instances (et non pas leurs noms string).
-                               Cela rend la fonction indépendante du nom 'GBS-1' ou 'GBS-2'.
+        inst_gbs, inst_tower : Les OBJETS instances réels.
+        names (dict) : Contient les noms des surfaces à chercher et le nom final à créer.
     """
     a = model.rootAssembly
     
-    # Noms des surfaces définis dans les fonctions de création de part
-    name_surf_gbs = 'GBS_Outer_Surface'
-    name_surf_tower = 'Tower_Lateral_Surface'
+    # Récupération des noms depuis le dictionnaire
+    surf_gbs_key = names['surf_gbs']       # ex: 'Surf_Ext_GBS'
+    surf_tower_key = names['surf_tower']   # ex: 'Surf_Lat_Tower'
+    surf_global_key = names['surf_global'] # ex: 'Surf_Totale_Ext'
     
-    # Vérification d'existence
-    if name_surf_gbs not in inst_gbs.surfaces:
-        raise KeyError(f"Surface '{name_surf_gbs}' introuvable sur l'instance GBS.")
-    if name_surf_tower not in inst_tower.surfaces:
-        raise KeyError(f"Surface '{name_surf_tower}' introuvable sur l'instance Tour.")
+    print(f"--- Fusion des surfaces : {surf_gbs_key} + {surf_tower_key} -> {surf_global_key} ---")
 
-    # Récupération des objets surfaces
-    s1 = inst_gbs.surfaces[name_surf_gbs]
-    s2 = inst_tower.surfaces[name_surf_tower]
+    # 1. Vérification d'existence (Sécurité)
+    if surf_gbs_key not in inst_gbs.surfaces:
+        raise KeyError(f"La surface '{surf_gbs_key}' n'existe pas sur l'instance GBS.")
+    if surf_tower_key not in inst_tower.surfaces:
+        raise KeyError(f"La surface '{surf_tower_key}' n'existe pas sur l'instance Tour.")
 
-    # Opération Booléenne (Union)
-    # Cette surface est stockée au niveau de l'Assembly
+    # 2. Récupération des objets surfaces
+    s_gbs = inst_gbs.surfaces[surf_gbs_key]
+    s_tower = inst_tower.surfaces[surf_tower_key]
+
+    # 3. Nettoyage si la surface globale existe déjà
+    if surf_global_key in a.surfaces:
+        del a.surfaces[surf_global_key]
+
+    # 4. Fusion (Union)
     a.SurfaceByBoolean(
-        name='Global_Outer_Surface',
-        surfaces=(s1, s2),
+        name=surf_global_key,
+        surfaces=(s_gbs, s_tower),
         operation=UNION
     )
-    print("-> Surface fusionnée 'Global_Outer_Surface' créée.")
-
-def create_hydro_surface_robust(model, inst_gbs, inst_tower, h_mer):
-    """
-    Crée la surface d'application des forces hydrodynamiques de manière ROBUSTE.
-    Méthode : Intersection entre la surface extérieure connue (Part) et une boîte de sélection en hauteur.
-    
-    Garantie : Aucune face intérieure ne peut être sélectionnée.
-    """
-    print(f"--- Création Surface Hydro (Intersection Booléenne > {h_mer}m) ---")
-    a = model.rootAssembly
-    
-    # ---------------------------------------------------------
-    # 1. Récupération des Surfaces Extérieures PROPRES (Définies dans les Parts)
-    # ---------------------------------------------------------
-    # Ces surfaces existent déjà et sont saines (ne contiennent que la peau ext.)
-    try:
-        s_clean_gbs = inst_gbs.surfaces['GBS_Outer_Surface']
-        s_clean_tower = inst_tower.surfaces['Tower_Lateral_Surface']
-    except KeyError:
-        raise KeyError("Les surfaces 'GBS_Outer_Surface' ou 'Tower_Lateral_Surface' n'existent pas sur les instances. Vérifiez create_tower et create_fused_gbs.")
-
-    # On crée une surface temporaire qui contient TOUT l'extérieur (Haut + Bas)
-    surf_total_clean_name = '__Temp_Outer_All__'
-    if surf_total_clean_name in a.surfaces: del a.surfaces[surf_total_clean_name]
-    
-    s_total_clean = a.SurfaceByBoolean(
-        name=surf_total_clean_name,
-        surfaces=(s_clean_gbs, s_clean_tower),
-        operation=UNION
-    )
-
-    # ---------------------------------------------------------
-    # 2. Sélection de la ZONE DE HAUTEUR (Sale)
-    # ---------------------------------------------------------
-    # On prend TOUTES les faces au-dessus de h_mer (Intérieur + Extérieur)
-    # On y va "à la louche" avec une bounding box géante
-    faces_zone_gbs = inst_gbs.faces.getByBoundingBox(yMin=h_mer - 0.01, yMax=9999.0)
-    faces_zone_tower = inst_tower.faces.getByBoundingBox(yMin=h_mer - 0.01, yMax=9999.0)
-    
-    if len(faces_zone_gbs) == 0 and len(faces_zone_tower) == 0:
-        raise ValueError(f"Aucune face trouvée au-dessus de {h_mer}m !")
-
-    # On crée une surface temporaire "Zone" (qui contient aussi l'intérieur du tube, ce qu'on ne veut pas)
-    surf_zone_name = '__Temp_Zone_Height__'
-    # Astuce : Pour créer une surface à partir de listes de faces de deux instances, 
-    # il faut passer par une séquence unique ou deux surfaces temp.
-    # Ici on fait simple : 2 surfaces temp puis Union.
-    
-    surfs_to_merge = []
-    if len(faces_zone_gbs) > 0:
-        surfs_to_merge.append(a.Surface(name='__T1__', side1Faces=faces_zone_gbs))
-    if len(faces_zone_tower) > 0:
-        surfs_to_merge.append(a.Surface(name='__T2__', side1Faces=faces_zone_tower))
-        
-    if len(surfs_to_merge) == 1:
-        s_zone_height = surfs_to_merge[0]
-    else:
-        s_zone_height = a.SurfaceByBoolean(name=surf_zone_name, surfaces=tuple(surfs_to_merge), operation=UNION)
-
-    # ---------------------------------------------------------
-    # 3. L'INTERSECTION MAGIQUE (Le Filtre)
-    # ---------------------------------------------------------
-    # On garde seulement ce qui est à la fois "Propre" ET "Dans la zone"
-    
-    final_name = 'Global_Outer_Surface'
-    # Suppression préventive
-    if final_name in a.surfaces: del a.surfaces[final_name]
-    
-    a.SurfaceByBoolean(
-        name=final_name,
-        surfaces=(s_total_clean, s_zone_height),
-        operation=INTERSECTION
-    )
-    
-    # ---------------------------------------------------------
-    # 4. Nettoyage des surfaces temporaires
-    # ---------------------------------------------------------
-    # On supprime les surfaces intermédiaires pour ne pas polluer l'arbre
-    temp_names = [surf_total_clean_name, surf_zone_name, '__T1__', '__T2__']
-    for name in temp_names:
-        if name in a.surfaces: del a.surfaces[name]
-
-    print(f"-> Surface '{final_name}' créée par Intersection Booléenne (Sûre à 100%).")
+    print(f"-> Surface globale '{surf_global_key}' créée avec succès.")

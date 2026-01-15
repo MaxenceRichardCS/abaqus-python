@@ -7,77 +7,96 @@ from caeModules import *
 # =============================================================================
 
 def apply_tabular_surface_traction(
-        model,
-        surfaceName,
-        stepName,
-        data,
-        directionVector,
-        magnitude,
-        ampName='Amp_Tabular'
+        model, names, stepName, data, directionVector, 
+        magnitude, h_cut, ampName='Amp_Tabular', 
+        mask_side='above', surf_key='surf_global'
     ):
     """
-    Applique une force répartie (Surface Traction) sur une surface donnée,
-    avec une intensité qui varie au cours du temps selon un tableau de données.
-
+    Applique une force répartie sur une surface, mais masquée par une hauteur (h_cut).
+    Utilise une transition douce (tanh) pour éviter les erreurs numériques.
+    
     Args:
-        model: Le modèle Abaqus.
-        surfaceName (str): Nom de la surface (déjà créée dans l'assemblage).
-        stepName (str): Nom de l'étape (Step) où la force s'applique.
-        data (list): Paires (Temps, Amplitude) ex: ((0,0), (1,1)).
-        directionVector (tuple): Vecteur (x, y, z) donnant la direction de la force.
-        magnitude (float): Valeur de base de la force.
-        ampName (str): Nom à donner à la courbe d'amplitude.
+        model : Le modèle Abaqus.
+        names (dict) : Le dictionnaire contenant les noms des surfaces.
+        stepName (str) : L'étape où la force est appliquée.
+        data (tuple) : Les données (temps, amplitude) pour l'évolution temporelle.
+        directionVector (tuple) : Vecteur direction de la force ((0,0,0), (1,0,0)).
+        magnitude (float) : Valeur de base de la force.
+        h_cut (float) : Altitude de la coupure (ex: niveau de la mer).
+        ampName (str) : Nom à donner à l'amplitude temporelle.
+        mask_side (str) : 'above' pour force au-dessus de h_cut (Vent), 
+                          'below' pour force en dessous (Courant).
+        surf_key (str) : La clé dans le dictionnaire 'names' pour trouver la surface.
+                         Par défaut 'surf_global'.
     """
-    
-    print(f"\n--- Application d'une Traction Surfacique sur '{surfaceName}' ---")
-    
+    print(f"\n--- Application Force Masquée ({mask_side} {h_cut}m) ---")
     a = model.rootAssembly
-
-    # -------------------------------
-    # Vérification de sécurité
-    # -------------------------------
-    # On vérifie d'abord que la surface existe bien dans l'assemblage.
-    if surfaceName not in a.surfaces:
-        print(f"ERREUR : La surface '{surfaceName}' n'existe pas dans l'assemblage rootAssembly !")
-        print("Vérifiez que vous avez bien lancé la fonction 'fus_outer_surfaces' avant.")
-        return # On arrête la fonction ici pour éviter le crash
-
-    # -------------------------------
-    # Création de l'Amplitude Temporelle
-    # -------------------------------
-    # Une "Amplitude" définit comment la force évolue (ex: monte progressivement).
-    # Si elle n'existe pas encore, on la crée à partir des données 'data'.
     
-    if ampName not in model.amplitudes.keys():
-        model.TabularAmplitude(
-            name=ampName,
-            timeSpan=STEP,          # Le temps 0 correspond au début de l'étape (Step)
-            smooth=SOLVER_DEFAULT,  # Lissage standard entre les points
-            data=data               # Les points (temps, valeur)
-        )
-        print(f"-> Amplitude '{ampName}' créée (Type: Tabular).")
+    # 1. Récupération du vrai nom de la surface depuis le dictionnaire
+    if surf_key not in names:
+        raise KeyError(f"La clé '{surf_key}' n'existe pas dans le dictionnaire 'names'.")
+    
+    real_surface_name = names[surf_key]
+    
+    # Vérification que la surface existe bien dans l'assemblage
+    if real_surface_name not in a.surfaces:
+        raise ValueError(f"La surface '{real_surface_name}' est introuvable dans l'assemblage.")
+
+    # 2. Création du Masque Spatial (ExpressionField)
+    # On gère le sens : Au-dessus (Vent) ou En-dessous (Eau)
+    
+    field_name = f'Mask_{mask_side}_{int(h_cut)}m'
+    
+    # Formule Sigmoïde (tanh)
+    # k = 10.0 contrôle la raideur de la transition (plus c'est grand, plus c'est net)
+    if mask_side == 'above':
+        # Vaut 0 en bas, 1 en haut
+        formula = f'0.5 * (1.0 + tanh((Y - {h_cut}) * 10.0))'
+    elif mask_side == 'below':
+        # Vaut 1 en bas, 0 en haut (notez le signe moins devant tanh)
+        formula = f'0.5 * (1.0 - tanh((Y - {h_cut}) * 10.0))'
     else:
-        print(f"-> Amplitude '{ampName}' existe déjà, on la réutilise.")
+        raise ValueError("mask_side doit être 'above' ou 'below'")
 
-    # -------------------------------
-    # Création de la Charge (Traction)
-    # -------------------------------
-    # On définit maintenant la force physique qui utilise l'amplitude créée ci-dessus.
+    # Nettoyage préventif
+    if field_name in model.analyticalFields:
+        del model.analyticalFields[field_name]
+
+    model.ExpressionField(
+        name=field_name,
+        expression=formula, 
+        localCsys=None,
+        description=f'Masque progressif {mask_side} Y={h_cut}m'
+    )
+    print(f"-> Champ analytique '{field_name}' créé.")
+
+    # 3. Création de l'Amplitude Temporelle (Chronologie)
+    if ampName not in model.amplitudes:
+        model.TabularAmplitude(
+            name=ampName, timeSpan=STEP, smooth=SOLVER_DEFAULT, data=data
+        )
+
+    # 4. Application de la Charge (SurfaceTraction)
     
-    # Génération d'un nom unique pour la charge pour éviter les conflits
-    # On inclut le nom de la surface et un élément du vecteur
-    load_name = f"Load_{ampName}_{surfaceName}"
+    # Génération d'un nom unique pour la charge pour éviter les doublons
+    # On utilise un bout du vecteur direction pour différencier X et Z
+    suffix_vec = str(directionVector).replace(' ', '').replace('(', '').replace(')', '')[:6]
+    load_name = f'Load_{ampName}_{suffix_vec}'
     
-    # SurfaceTraction est utilisé pour des forces générales (pas forcément normales à la surface)
+    if load_name in model.loads: del model.loads[load_name]
+
     model.SurfaceTraction(
         name=load_name,
         createStepName=stepName,
-        region=a.surfaces[surfaceName], # On applique sur l'objet surface récupéré
-        magnitude=magnitude,            # Valeur de référence
-        directionVector=directionVector,# Vecteur (X, Y, Z)
-        traction=GENERAL,               # 'GENERAL' permet de définir un vecteur arbitraire
-        distributionType=UNIFORM,       # La force est la même partout sur la surface
-        amplitude=ampName               # On lie la force à l'évolution temporelle
+        region=a.surfaces[real_surface_name], # Utilisation du nom dynamique
+        magnitude=magnitude,
+        directionVector=directionVector,
+        traction=GENERAL,
+        
+        # C'est ici qu'on lie tout : Espace (Field) et Temps (Amplitude)
+        distributionType=FIELD,
+        field=field_name,
+        amplitude=ampName
     )
-
-    print(f"-> Succès : Charge '{load_name}' appliquée (Vecteur: {directionVector}).")
+    
+    print(f"-> Force appliquée avec succès : '{load_name}' sur '{real_surface_name}'.")

@@ -3,7 +3,7 @@ import def_mesh  as meshpart
 import def_mat as mat
 import def_boundaryconditions as BC
 import def_force as force
-import def_job as job
+import def_job as jobb
 
 # =============================================================================
 # Initialisation du modèle Abaqus
@@ -18,7 +18,7 @@ import numpy as np
 
 # Initialise CAE (utile si on lance le script depuis l'extérieur)
 executeOnCaeStartup()
-
+Mdb()
 # Crée un modèle dans la base de données
 mymodel = mdb.Model(name='Model-1')
 
@@ -59,6 +59,9 @@ param_geom = {
     'cyl_height': 18.0,
 }
 
+h_mer = 40
+
+
 props_steel = {
     'young': 210e9,   # 210 GPa
     'poisson': 0.3,
@@ -77,14 +80,29 @@ param_mesh = {
     'GBS' :5.0  #compromis pour rester en dessous de 1 000 noeuds 
 }
 
+names_dict = {
+    # Noms des Parts (Bibliothèque)
+    'part_tower': 'Tower_Steel',
+    'part_gbs':   'GBS_Concrete',
+    
+    # Noms des Instances (Assemblage)
+    'inst_tower': 'Inst_Tower_1',
+    'inst_gbs':   'Inst_GBS_1',
+    
+    # Noms des Surfaces
+    'surf_tower': 'Surf_Steel_Outer',
+    'surf_gbs':   'Surf_Concrete_Outer',
+    'surf_global':'Surf_Global_Environment'
+}
+
 # =============================================================================
 # Vérification des paramètres et création des deux Parts 
 # =============================================================================
 geom.check_parameters(param_geom)
 print("Check parameters ok")
 
-tower_part = geom.create_tower(mymodel, param_geom)
-gbs_part = geom.create_fused_gbs(mymodel,param_geom)
+tower_part = geom.create_tower(mymodel, param_geom,names_dict)
+gbs_part = geom.create_fused_gbs(mymodel,param_geom,names_dict)
 
 # =============================================================================
 # Création de l'Assembly 
@@ -97,8 +115,7 @@ h_gbs_top = param_geom['plateau_height'] + param_geom['cone_height'] + param_geo
 # ---------------------------------------------------------
 inst_gbs, inst_tower = geom.create_assembly_geometry(
     mymodel,
-    tower_part_name='Tower',
-    gbs_part_name='GBS_Fused',
+    names_dict,
     h_pipe_bottom=0.0,
     h_gbs_top=h_gbs_top
 )
@@ -113,7 +130,7 @@ BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
 # Application de l'encastrement au sol
 # =============================================================================
 
-BC.encastrement_GBS(mymodel)
+BC.encastrement_GBS(mymodel,names_dict)
 
 # =============================================================================
 # Application des matériaux
@@ -139,7 +156,7 @@ meshpart.MeshGBS(gbs_part, param_mesh['GBS'])
 # GESTION DES SURFACES (FUSION)
 # =============================================================================
 
-geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower)
+geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower,names_dict)
 
 # =============================================================================
 # CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
@@ -155,9 +172,9 @@ geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower)
 # Format : (Temps s, Force N)
 data_force_x = (
     (0.0, 0.0),
-    (1.0, 2000.0),  # Montée rapide à 2000 N
-    (2.0, 5000.0),  # Pic à 5000 N
-    (3.0, 2000.0),
+    (1.0, 2.0),  # Montée rapide à 2000 N
+    (2.0, 5.0),  # Pic à 5000 N
+    (3.0, 2.0),
     (4.0, 0.0)      # Fin à 4s
 )
 
@@ -165,7 +182,7 @@ data_force_x = (
 # Profil différent : plus lent, moins fort, dure plus longtemps
 data_force_z = (
     (0.0, 0.0),
-    (2.5, 800.0),   # Pic décalé à 2.5s
+    (2.5, 8.0),   # Pic décalé à 2.5s
     (5.0, 0.0)      # Fin à 5s
 )
 
@@ -206,33 +223,40 @@ if 'F-Output-1' in mymodel.fieldOutputRequests:
 
 # 1. Application Force X
 # Vecteur X : ((0,0,0), (1,0,0)) -> Pointe vers X positif
+# Dans main.py
+
+# ...
+
+# 1. Force du VENT (Au-dessus de l'eau)
 force.apply_tabular_surface_traction(
     model=mymodel,
-    surfaceName='Global_Outer_Surface',
+    names=names_dict,                # Le dictionnaire contenant les noms
     stepName='Step_BC',
-    data=data_force_x,               # Série de données spécifique X
+    data=data_force_x,
     directionVector=((0,0,0), (1,0,0)), 
-    magnitude=1.0,                   # 1.0 * Data = Valeur réelle du tableau
-    ampName='Amp_Force_X'            # Nom unique
+    magnitude=1.0, 
+    h_cut=h_mer,
+    ampName='Amp_Vent_X',
+    mask_side='above',               # Spécifique au vent
+    surf_key='surf_global'           # On vise la surface fusionnée
 )
 
-# 2. Application Force Z
-# Vecteur Z : ((0,0,0), (0,0,1)) -> Pointe vers Z positif
+# 2. Force du COURANT (En-dessous de l'eau)
 force.apply_tabular_surface_traction(
     model=mymodel,
-    surfaceName='Global_Outer_Surface',
+    names=names_dict,
     stepName='Step_BC',
-    data=data_force_z,               # Série de données spécifique Z
+    data=data_force_z,
     directionVector=((0,0,0), (0,0,1)),
-    magnitude=1.0,                   # 1.0 * Data = Valeur réelle du tableau
-    ampName='Amp_Force_Z'            # Nom unique
+    magnitude=1.0, 
+    h_cut=h_mer,
+    ampName='Amp_Courant_Z',
+    mask_side='above',               # Spécifique au courant
+    surf_key='surf_global'
 )
 
-
-
-geom.create_hydro_surface_robust(mymodel, inst_gbs, inst_tower, 30)
 # =============================================================================
 # CRÉATION ET LANCEMENT DU JOB
 # =============================================================================
 
-#job.lancement_job(mymodel)
+jobb.lancement_job(mymodel)

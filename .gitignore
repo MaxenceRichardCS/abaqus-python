@@ -15,9 +15,12 @@ __pycache__/
 *.env
 *.inp
 *.ipm
-
+*.com
 ## Ignorer les fichiers .rec
 *.rec
+
+## Ignorer les fichiers .png
+*.png 
 
 # C extensions
 *.so

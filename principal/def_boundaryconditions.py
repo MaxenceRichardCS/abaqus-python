@@ -8,46 +8,50 @@ import regionToolset
 # FONCTION : ENCASTREMENT DE LA BASE (SOL)
 # =============================================================================
 
-def encastrement_GBS(model):
+def encastrement_GBS(model, names):
     """
     Bloque tous les mouvements de la base du GBS (Encastrement parfait).
-    S'applique sur le Step 'Initial' pour être actif dès le début de la simulation.
+    Utilise le dictionnaire 'names' pour cibler la bonne instance dynamiquement.
     """
     print("\n--- Application de l'Encastrement (Sol) ---")
 
-    # 1. Récupération de l'instance
-    # On travaille sur l'assemblage racine qui contient les instances positionnées
     a = model.rootAssembly
-    inst_gbs = a.instances['GBS-1']
+    
+    # 1. Récupération du nom de l'instance depuis le dictionnaire
+    # Plus besoin d'écrire 'GBS-1' en dur ici !
+    inst_name = names['inst_gbs'] 
+    
+    # Vérification de sécurité pour éviter le crash si l'instance manque
+    if inst_name not in a.instances:
+        raise KeyError(f"ERREUR : L'instance '{inst_name}' est introuvable dans l'assemblage.")
+        
+    inst_gbs = a.instances[inst_name]
 
-    # 2. Sélection géométrique des faces au sol
-    # On utilise une "Bounding Box" (Boîte englobante) pour capturer les faces à Y=0.
-    # On prend une petite marge (+/- 0.1) pour être sûr de ne rien rater à cause des arrondis numériques.
+    # 2. Sélection géométrique des faces au sol (Bounding Box)
+    # On cherche tout ce qui est à Y=0 (avec une tolérance +/- 0.1)
     bottom_faces = inst_gbs.faces.getByBoundingBox(
         xMin=-1000.0, yMin=-0.1, zMin=-1000.0,
         xMax=1000.0,  yMax=0.1,  zMax=1000.0
     )
 
-    # Vérification de sécurité
+    # Vérification que la sélection a marché
     if len(bottom_faces) == 0:
-        print("ERREUR : Aucune face trouvée à Y=0 pour l'encastrement du GBS.")
+        print(f"ERREUR CRITIQUE : Aucune face trouvée à Y=0 sur l'instance {inst_name}.")
         return
 
-    # 3. Création du Set (Groupe)
-    # Abaqus a besoin d'un 'Set' nommé pour appliquer une condition limite.
-    region_base = a.Set(name='Base_GBS_Set', faces=bottom_faces)
+    # 3. Création du Set (Groupe nommé)
+    # Abaqus a besoin d'un 'Set' pour appliquer une BC.
+    region_base = a.Set(name='Set_Base_GBS', faces=bottom_faces)
 
-    # 4. Application de la Condition Limite (BC)
-    # Type : Encastre (U1=U2=U3=0 et UR1=UR2=UR3=0)
-    # Step : 'Initial' (Indispensable pour que la structure soit stable dès t=0)
+    # 4. Application de la Condition Limite (Encastre)
+    # On l'applique sur le Step 'Initial' pour qu'elle soit active tout le temps.
     model.EncastreBC(
-        name='BC_Encastrement_Base',
+        name='BC_Encastrement_Sol',
         createStepName='Initial', 
         region=region_base
     )
 
-    print(f"-> Succès : {len(bottom_faces)} face(s) encastrée(s) à la base.")
-
+    print(f"-> Succès : {len(bottom_faces)} face(s) encastrée(s) à la base de '{inst_name}'.")
 
 # =============================================================================
 # FONCTION : COLLAGE RIGIDE TOUR / GBS (INTERACTION TIE)
