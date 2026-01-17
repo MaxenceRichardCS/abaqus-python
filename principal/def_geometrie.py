@@ -95,8 +95,29 @@ def check_parameters(params):
 # =============================================================================
 # 3. CRÉATION DE LA TOUR (Partie Acier)
 # =============================================================================
+def create_tower_1d(model, param, names):
+    """
+    Crée la géométrie de la tour sous forme de fil (WIRE) pour éléments poutres (B31).
+    """
+    print(f"   -> Mode 1D : Création d'une poutre (Wire).")
+    part_name = names['part_tower']
+    h = param['h_tower']
+    
+    # 1. Création de la Part (Espace 3D, Deformable)
+    p = model.Part(name=part_name, dimensionality=THREE_D, type=DEFORMABLE_BODY)
+    
+    # 2. Dessin de la ligne (Wire)
+    # De (0,0,0) à (0, h, 0)
+    p.WirePolyLine(points=[((0.0, 0.0, 0.0), (0.0, h, 0.0))], mergeType=IMPRINT, meshable=ON)
+    
+    # 3. Création du Set pour l'assignation de section
+    # On sélectionne l'unique arête créée
+    edge = p.edges.findAt(((0.0, h/2.0, 0.0),))
+    p.Set(name='Set_Beam_All', edges=edge)
+    
+    return p
 
-def create_tower(model, params, names):
+def create_tower_3d(model, params, names):
     """
     Crée la géométrie de la Tour.
     La tour est définie par un profil trapézoïdal tourné à 360° (Révolution).
@@ -207,6 +228,25 @@ def create_tower(model, params, names):
     
     print(f"-> Pièce '{part_name}' créée avec sa surface '{surf_name}'.")
     return final_part
+
+def create_tower(model, param, names):
+    """
+    Fonction principale (Aiguilleur).
+    Appelle la version 1D ou 3D selon le paramètre.
+    """
+    part_name = names['part_tower']
+    
+    # Nettoyage préventif
+    if part_name in model.parts:
+        del model.parts[part_name]
+
+    print(f"\n--- Création Part Tour (Type: {param['dim_tour']}) ---")
+
+    # L'AIGUILLAGE EST ICI
+    if param['dim_tour'] == '1D':
+        return create_tower_1d(model, param, names)
+    else:
+        return create_tower_3d(model, param, names)
 
 
 # =============================================================================
@@ -435,52 +475,168 @@ def fus_outer_surfaces(model, inst_gbs, inst_tower, names):
 # Création des points de contrôle
 # =============================================================================
 
-def create_monitor_set(model, names, inst_tower, h_total):
+def create_monitor_point_top(model, names, inst_tower, h_total, dim_type):
     """
-    Crée un Set (point de repère) au sommet de la tour pour suivre son déplacement.
-    Utilise le nom défini dans le dictionnaire 'names'.
+    Crée un POINT unique pour le monitoring.
+    - En 1D : Utilise le sommet de la poutre (Vertex).
+    - En 3D : Crée un Point de Référence (RP) au centre + Couplage avec le bord.
     
-    Args:
-        model : Le modèle Abaqus.
-        names (dict) : Le dictionnaire de configuration (doit contenir 'set_monitor').
-        inst_tower : L'objet Instance de la tour (pour chercher les arêtes).
-        h_total : La hauteur totale (Y) où se trouve le sommet.
+    Retourne True si succès, False si échec (permet de continuer sans planter).
     """
-    print(f"\n--- Création du Set de Monitoring (Cible : Sommet à Y={h_total:.2f}m) ---")
+    print(f"\n--- Création du Point de Monitoring (Cible : Y={h_total:.2f}m) ---")
     a = model.rootAssembly
-    
-    # 1. Récupération du nom du Set
-    if 'set_monitor' not in names:
-        raise KeyError("Le dictionnaire 'names' ne contient pas la clé 'set_monitor'.")
-    
     set_name = names['set_monitor']
     
-    # 2. Nettoyage préventif
-    # Si le set existe déjà (ex: relance du script), on le supprime pour le recréer propre.
-    if set_name in a.sets:
-        del a.sets[set_name]
+    # Nettoyage préventif (Set, RP, Coupling précédents)
+    if set_name in a.sets: del a.sets[set_name]
+    if 'RP_Monitor_Top' in a.features: del a.features['RP_Monitor_Top']
+    if 'Cpl_Monitor_Top' in model.constraints: del model.constraints['Cpl_Monitor_Top']
 
-    # 3. Sélection Géométrique Robuste (Bounding Box)
-    # Au lieu de chercher un point précis (risqué), on capture tout ce qui est
-    # dans une tranche très fine au sommet (+/- 1 cm).
     try:
-        # On cherche les arêtes (Edges) du cercle supérieur
-        top_edges = inst_tower.edges.getByBoundingBox(
-            yMin=h_total - 0.01,  # 1 cm en dessous
-            yMax=h_total + 0.01,  # 1 cm au dessus
-            xMin=-500.0, xMax=500.0, # Large en X
-            zMin=-500.0, zMax=500.0  # Large en Z
-        )
-        
-        # Vérification qu'on a bien attrapé quelque chose
-        if len(top_edges) == 0:
-            print(f"ERREUR CRITIQUE : Aucune arête trouvée à l'altitude Y={h_total}m !")
-            print("Vérifiez la hauteur totale calculée dans main.py.")
-            return
+        # --- CAS 1 : MODE 1D (La tour est déjà une ligne) ---
+        if dim_type == '1D':
+            # On cherche le sommet (Vertex)
+            verts = inst_tower.vertices.getByBoundingBox(
+                yMin=h_total - 0.05, yMax=h_total + 0.05,
+                xMin=-0.5, xMax=0.5, zMin=-0.5, zMax=0.5
+            )
+            
+            if len(verts) > 0:
+                a.Set(name=set_name, vertices=verts)
+                print(f"   -> [SUCCÈS 1D] Point de suivi créé sur le sommet de la poutre.")
+                return True
+            else:
+                print(f"   -> [ATTENTION] Sommet de poutre introuvable à Y={h_total}.")
+                return False
 
-        # 4. Création du Set
-        a.Set(name=set_name, edges=top_edges)
-        print(f"-> Set '{set_name}' créé avec succès ({len(top_edges)} arêtes sélectionnées).")
-        
+        # --- CAS 2 : MODE 3D (La tour est un tube) ---
+        else:
+            # A. On cherche le bord supérieur (Cercle d'arêtes)
+            edges = inst_tower.edges.getByBoundingBox(
+                yMin=h_total - 0.05, yMax=h_total + 0.05
+            )
+            
+            if len(edges) == 0:
+                print(f"   -> [ATTENTION] Bord supérieur introuvable à Y={h_total}.")
+                return False
+
+            # B. Création d'un Point de Référence (RP) au centre du cercle
+            rp_feat = a.ReferencePoint(point=(0.0, h_total, 0.0))
+            a.features.changeKey(fromName=rp_feat.name, toName='RP_Monitor_Top')
+            
+            # Récupération de l'objet géométrique RP pour le Set
+            # (L'ID du RP est accessible via l'attribut .id de la feature créée)
+            rp_id = a.features['RP_Monitor_Top'].id
+            rp_geo = a.referencePoints[rp_id]
+            
+            # C. Création du Set sur ce RP
+            region_rp = a.Set(name=set_name, referencePoints=(rp_geo,))
+            
+            # D. Création du Couplage (Le RP suit le mouvement moyen du tube)
+            # Surface esclave = le bord du tube
+            surf_name = 'Surf_Monitor_Edges'
+            a.Surface(name=surf_name, side1Edges=edges)
+            
+            model.Coupling(name='Cpl_Monitor_Top', 
+                           controlPoint=region_rp, 
+                           surface=a.surfaces[surf_name], 
+                           couplingType=KINEMATIC, # Ou CONTINUUM si on veut moins rigidifier
+                           influenceRadius=WHOLE_SURFACE,
+                           u1=ON, u2=ON, u3=ON)
+            
+            print(f"   -> [SUCCÈS 3D] Point de Référence (RP) créé et couplé au sommet.")
+            return True
+
     except Exception as e:
-        print(f"ERREUR lors de la création du Set de monitoring : {e}")
+        print(f"   -> [ERREUR NON BLOQUANTE] Echec création point monitoring : {e}")
+        return False    
+
+
+def create_monitor_point_GBS(model, names, params, h_monitor):
+    """
+    Crée un point de monitoring sur la face INTERNE du GBS à une hauteur h_monitor.
+    Méthode : Partitionne la Part GBS pour créer un sommet (Vertex) exact à cette hauteur.
+    """
+    print(f"\n--- Création Point Monitoring GBS (Interne, Y={h_monitor:.2f}m) ---")
+    
+    # 1. Récupération des objets
+    part_name = names['part_gbs']
+    inst_name = names['inst_gbs']
+    set_name = names['set_monitor']
+    
+    p = model.parts[part_name]
+    a = model.rootAssembly
+    
+    # 2. Partitionnement de la Pièce (Part)
+    # On crée un plan de coupe horizontal à Y = h_monitor
+    # Cela garantit qu'il y aura des noeuds à cette hauteur exacte.
+    
+    # On vérifie si la partition existe déjà pour ne pas la refaire 50 fois
+    feature_name = f'Partition_Monitor_{int(h_monitor)}m'
+    if feature_name not in p.features:
+        try:
+            datum_id = p.DatumPlaneByPrincipalPlane(principalPlane=XZPLANE, offset=h_monitor).id
+            p.PartitionCellByDatumPlane(datumPlane=p.datums[datum_id], cells=p.cells)
+            # On renomme la feature pour la retrouver
+            p.features.changeKey(fromName=p.features.keys()[-1], toName=feature_name)
+            print("   -> Partition créée sur le GBS (Part).")
+            
+            # Il faut régénérer l'assemblage pour que la partition apparaisse sur l'instance
+            a.regenerate()
+        except Exception as e:
+            print(f"   -> Info: Partition non créée (déjà existante ou erreur): {e}")
+
+    # 3. Calcul du Rayon Interne Cible (Géométrie Analytique)
+    # On doit savoir où cliquer (quel rayon ?) pour trouver la face interne.
+    
+    h_plat = params['plateau_height']
+    h_cone = params['cone_height']
+    
+    # Rayons du cone
+    r_ext_bot = params['cone_bottom_outer_radius']
+    r_ext_top = params['cone_top_outer_radius']
+    t_cone = params['cone_thickness']
+    r_int_bot = r_ext_bot - t_cone
+    r_int_top = r_ext_top - t_cone
+    
+    r_target = 0.0
+    
+    if h_monitor < h_plat:
+        print("   ERREUR : h_monitor est dans le plateau (pas de face interne).")
+        return False
+        
+    elif h_monitor <= (h_plat + h_cone):
+        # On est dans le cône : Interpolation linéaire
+        h_local = h_monitor - h_plat
+        ratio = h_local / h_cone
+        r_target = r_int_bot + (r_int_top - r_int_bot) * ratio
+        print(f"   -> Zone Cône : Rayon interne calculé = {r_target:.3f} m")
+        
+    else:
+        # On est dans le cylindre supérieur (Rayon constant)
+        r_target = r_int_top
+        print(f"   -> Zone Cylindre : Rayon interne constant = {r_target:.3f} m")
+
+    # 4. Sélection du Vertex sur l'Instance
+    # On cherche le point à (r_target, h_monitor, 0.0)
+    # On utilise une petite boîte de tolérance
+    
+    inst = a.instances[inst_name]
+    
+    verts = inst.vertices.getByBoundingBox(
+        xMin=r_target - 0.1, xMax=r_target + 0.1,
+        yMin=h_monitor - 0.01, yMax=h_monitor + 0.01,
+        zMin=-0.1, zMax=0.1 # On cherche sur l'axe X (Z~0)
+    )
+    
+    # Nettoyage ancien set
+    if set_name in a.sets: del a.sets[set_name]
+
+    if len(verts) > 0:
+        a.Set(name=set_name, vertices=verts)
+        print(f"   -> [SUCCÈS] Point de monitoring GBS créé à R={r_target:.2f}, Y={h_monitor}.")
+        return True
+    else:
+        print(f"   -> [ECHEC] Aucun vertex trouvé à R={r_target:.2f}, Y={h_monitor}.")
+        print("      Vérifiez que h_monitor ne tombe pas dans le vide.")
+        return False

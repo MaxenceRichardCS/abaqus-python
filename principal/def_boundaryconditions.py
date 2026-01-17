@@ -4,6 +4,7 @@ from caeModules import *
 from driverUtils import executeOnCaeStartup
 import regionToolset
 
+
 # =============================================================================
 # FONCTION : ENCASTREMENT DE LA BASE (SOL)
 # =============================================================================
@@ -57,7 +58,7 @@ def encastrement_GBS(model, names):
 # FONCTION : COLLAGE RIGIDE TOUR / GBS (INTERACTION TIE)
 # =============================================================================
 
-def create_tie_tower_gbs(model, inst_tower, inst_gbs, h_interface):
+def create_tie_tower_gbs_3d(model, inst_tower, inst_gbs, h_interface):
     """
     Crée une liaison rigide ('Tie') entre la Tour et le GBS.
     C'est l'équivalent d'une soudure ou d'un boulonnage indéformable.
@@ -124,3 +125,55 @@ def create_tie_tower_gbs(model, inst_tower, inst_gbs, h_interface):
     )
 
     print("-> Succès : Liaison Tie créée entre la Tour et le GBS.")
+
+
+def create_tie_tower_gbs_1d(model, a, inst_tower, inst_gbs, h_interface):
+    """
+    Crée un COUPLING (Point à Surface) pour le modèle 1D (Poutre).
+    Type: KINEMATIC (Rigide) pour simuler un encastrement parfait.
+    """
+    print("   -> Mode 1D : Création contrainte COUPLING (Rigide).")
+    
+    # 1. Point de Contrôle (Le bas de la poutre)
+    # On cherche le Vertex (Point) au niveau de l'interface
+    v_bot = inst_tower.vertices.getByBoundingBox(
+        yMin=h_interface-0.01, yMax=h_interface+0.01,
+        xMin=-0.5, xMax=0.5, zMin=-0.5, zMax=0.5
+    )
+    
+    if len(v_bot) == 0:
+        print("ERREUR : Aucun vertex trouvé pour le pied de la poutre (1D).")
+        return
+
+    ref_set_name = 'Set_Ref_Coupling_TowerBot'
+    a.Set(name=ref_set_name, vertices=v_bot)
+    
+    # 2. Surface Esclave (Haut du GBS - Anneau Béton)
+    gbs_top_faces = inst_gbs.faces.getByBoundingBox(
+        yMin=h_interface-0.1, yMax=h_interface+0.1
+    )
+    surf_slave_name = 'Surf_Interface_GBS_Top'
+    a.Surface(name=surf_slave_name, side1Faces=gbs_top_faces)
+    
+    # 3. Création du Coupling
+    # Kinematic = Le béton suit le mouvement rigide du point de la poutre
+    model.Coupling(name='Constraint_Coupling_Tower_GBS', 
+                   controlPoint=a.sets[ref_set_name], 
+                   surface=a.surfaces[surf_slave_name], 
+                   couplingType=KINEMATIC, 
+                   influenceRadius=WHOLE_SURFACE,
+                   u1=ON, u2=ON, u3=ON, ur1=ON, ur2=ON, ur3=ON) # Bloque tout
+
+def create_tie_tower_gbs(model, inst_tower, inst_gbs, h_interface, dim_type):
+    """
+    Fonction Aiguilleur : Appelle la bonne liaison selon dim_type ('1D' ou '3D').
+    """
+    print(f"\n--- Assemblage : Liaison Tour-GBS ({dim_type}) ---")
+    a = model.rootAssembly
+    
+    if dim_type == '1D':
+        # La version 1D a besoin de 'a' pour trouver le Set
+        create_tie_tower_gbs_1d(model, a, inst_tower, inst_gbs, h_interface)
+    else:
+        # CORRECTION : La version 3D redéfinit 'a' elle-même, on ne lui passe pas
+        create_tie_tower_gbs_3d(model, inst_tower, inst_gbs, h_interface)

@@ -52,6 +52,22 @@ def MeshTower(part_obj, size):
     nb_elems = len(part_obj.elements)
     print(f"-> Terminé : {nb_noeuds} noeuds / {nb_elems} éléments (C3D8R).")
 
+def MeshTower1D(part, size):
+    """Maillage 1D avec éléments B31"""
+    print(f"--- Maillage Tour 1D (Taille={size}) ---")
+    
+    # Seed
+    part.seedPart(size=size, deviationFactor=0.1)
+    
+    # Type d'élément : B31 (Beam, 3D, 2-node, linear)
+    elem_type = mesh.ElemType(elemCode=B31, elemLibrary=STANDARD)
+    
+    # On applique sur toutes les arêtes (il n'y en a qu'une en 1D)
+    part.setElementType(regions=(part.edges,), elemTypes=(elem_type,))
+    
+    part.generateMesh()
+    print(f"-> Maillage généré : {len(part.nodes)} nœuds, {len(part.elements)} éléments.")
+
 
 # =============================================================================
 # MAILLAGE DU GBS (TÉTRAÈDRES - C3D4)

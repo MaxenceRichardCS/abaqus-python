@@ -39,9 +39,13 @@ myview.partDisplay.geometryOptions.setValues(referenceRepresentation=ON)
 # =============================================================================
 # Paramètres
 # =============================================================================
+
 param_geom = {
+
+    'dim_tour' : '1D',  #1D ou 3D
+
     # Tower
-    'r_up_tower': 1.0,
+    'r_up_tower': 2.0,
     'r_down_tower': 3.5,
     'h_tower': 50.0,
     'thickness_tower': 0.5,
@@ -51,14 +55,19 @@ param_geom = {
     'plateau_height': 1.7,
 
     # Cône GBS (hollow)
-    'cone_height': 25.34,
+    'cone_height': 27.3,
     'cone_top_outer_radius': 3.5,
     'cone_bottom_outer_radius': 10.0,
     'cone_thickness': 0.5,
 
     # Cylindre au-dessus du cône
     'cyl_height': 18.0,
+
+    'h_monitor' : 42.65
 }
+
+r_moy = (param_geom['r_up_tower'] + param_geom['r_down_tower']) / 2.0
+param_geom['r_moy'] = r_moy
 
 h_mer = 40
 
@@ -78,9 +87,8 @@ props_concrete = {
 
 param_mesh = {
     'Tower':6.0 , #compromis pour rester en dessous de 1 000 noeuds 
-    'GBS' :5.0  #compromis pour rester en dessous de 1 000 noeuds 
+    'GBS' :3.0  #compromis pour rester en dessous de 1 000 noeuds 
 }
-
 
 names_dict = {
     # --- Géométrie (Parts) ---
@@ -108,7 +116,7 @@ names_dict = {
 geom.check_parameters(param_geom)
 print("Check parameters ok")
 
-tower_part = geom.create_tower(mymodel, param_geom,names_dict)
+tower_part = geom.create_tower(mymodel, param_geom, names_dict)
 gbs_part = geom.create_fused_gbs(mymodel,param_geom,names_dict)
 
 # =============================================================================
@@ -116,8 +124,13 @@ gbs_part = geom.create_fused_gbs(mymodel,param_geom,names_dict)
 # =============================================================================
 
 # 1. Application sur la Tour
-mat.create_and_assign_solid_material(model=mymodel,part=tower_part,mat_name='Steel_S355',props=props_steel)
-
+# DANS L'APPLICATION DES MATERIAUX
+if param_geom['dim_tour'] == '1D':
+    # Nouvelle fonction pour les poutres
+    mat.create_and_assign_beam_material(mymodel, tower_part, 'Steel_S355', props_steel, param_geom)
+else:
+    # Ancienne fonction pour les solides
+    mat.create_and_assign_solid_material(mymodel, tower_part, 'Steel_S355', props_steel)
 # 2. Application sur le GBS
 mat.create_and_assign_solid_material(model=mymodel,part=gbs_part,mat_name='Concrete_C50',props=props_concrete)
 
@@ -126,7 +139,10 @@ mat.create_and_assign_solid_material(model=mymodel,part=gbs_part,mat_name='Concr
 # =============================================================================
 
 # 1. Application sur la Tour
-meshpart.MeshTower(tower_part,param_mesh['Tower'])
+if param_geom['dim_tour'] == '1D':
+    meshpart.MeshTower1D(tower_part, size=param_mesh['Tower'])
+else:
+    meshpart.MeshTower(tower_part, param_mesh['Tower'])
 
 # 2. Application sur le GBS
 meshpart.MeshGBS(gbs_part, param_mesh['GBS'])
@@ -151,7 +167,7 @@ inst_gbs, inst_tower = geom.create_assembly_geometry(
 # ÉTAPE 2 : MÉCANIQUE (On crée les liens et les blocages)
 # ---------------------------------------------------------
 
-BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
+BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top, param_geom['dim_tour'])
 
 # =============================================================================
 # Application de l'encastrement au sol
@@ -159,17 +175,31 @@ BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
 
 BC.encastrement_GBS(mymodel,names_dict)
 
-
 # =============================================================================
 # Definition des points d'observation
 # =============================================================================
-h_total = h_gbs_top + param_geom['h_tower']
-geom.create_monitor_set(mymodel, names_dict, inst_tower, h_total)
+h_top = h_gbs_top + param_geom['h_tower']
+
+#monitor_created = geom.create_monitor_point_GBS(mymodel,names_dict,param_geom,param_geom['h_monitor'])
+monitor_created = geom.create_monitor_point_top(mymodel,names_dict, inst_tower, h_top, '1D')
+
+
+if monitor_created : 
+    print("--- Mise à jour du maillage GBS (post-partition) ---")
+    meshpart.MeshGBS(gbs_part, param_mesh['GBS']) # On remaille le GBS modifié
+else : 
+    print("   /!\\ ALERTE : Le point de monitoring n'a pas pu être créé.")
+    print("                Le calcul se lancera sans courbe de suivi au sommet.")
+
 # =============================================================================
 # GESTION DES SURFACES (FUSION)
 # =============================================================================
 
-geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower,names_dict)
+# On ne crée la surface globale "GBS + Tour" que si la tour est un volume (3D).
+# En 1D, la tour est gérée à part (via son Set de poutre).
+
+if param_geom['dim_tour'] == '3D':
+    geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower, names_dict)
 
 # =============================================================================
 # CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
@@ -227,37 +257,40 @@ force.configure_step_and_outputs(
 # =============================================================================
 # C. APPLICATION DES FORCES
 # =============================================================================
+
 print("\n--- Application des Chargements ---")
 
 # 1. Force du VENT X
-# On passe 'data_x_norm' (profil) et 'mag_x' (intensité) calculés plus haut
-force.apply_tabular_surface_traction(
+force.apply_force_automatic(
     model=mymodel,
     names=names_dict,
     stepName=names_dict['step_name'],
-    data=data_x_norm,            # <--- Données normalisées
+    data=data_x_norm,             # Profil temporel normalisé
     directionVector=((0,0,0), (1,0,0)), 
-    magnitude=mag_x,             # <--- Magnitude calculée (ex: 5000.0)
+    magnitude=mag_x,     # <--- On envoie la PRESSION pure (Pa)
     h_cut=h_mer,
     ampName='Amp_Vent_X',
     mask_side='above',
-    surf_key='surf_global'
+    surf_key='surf_global',
+    param_geom=param_geom         # <--- C'est lui qui permet la conversion interne
 )
 
 # 2. Force du VENT Z
-force.apply_tabular_surface_traction(
+force.apply_force_automatic(
     model=mymodel,
     names=names_dict,
     stepName=names_dict['step_name'],
-    data=data_z_norm,            # <--- Données normalisées
-    directionVector=((0,0,0), (0,0,1)),
-    magnitude=mag_z,             # <--- Magnitude calculée (ex: 8000.0)
+    data=data_z_norm,
+    directionVector=((0,0,0), (0,0,1)), 
+    magnitude=mag_z,     # <--- Idem, pression pure
     h_cut=h_mer,
-    ampName='Amp_Vent_Z',        # Nom plus cohérent
+    ampName='Amp_Vent_Z',
     mask_side='above',
-    surf_key='surf_global'
+    surf_key='surf_global',
+    param_geom=param_geom
 )
-# =============================================================================
+
+# ============================================================================
 # LANCEMENT ET POST-TRAITEMENT
 # =============================================================================
 
