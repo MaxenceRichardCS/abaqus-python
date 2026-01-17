@@ -4,6 +4,7 @@ import def_mat as mat
 import def_boundaryconditions as BC
 import def_force as force
 import def_job as jobb
+import def_post as post
 
 # =============================================================================
 # Initialisation du modèle Abaqus
@@ -80,19 +81,25 @@ param_mesh = {
     'GBS' :5.0  #compromis pour rester en dessous de 1 000 noeuds 
 }
 
+
 names_dict = {
-    # Noms des Parts (Bibliothèque)
+    # --- Géométrie (Parts) ---
     'part_tower': 'Tower_Steel',
     'part_gbs':   'GBS_Concrete',
     
-    # Noms des Instances (Assemblage)
+    # --- Assemblage (Instances) ---
     'inst_tower': 'Inst_Tower_1',
     'inst_gbs':   'Inst_GBS_1',
     
-    # Noms des Surfaces
+    # --- Surfaces ---
     'surf_tower': 'Surf_Steel_Outer',
     'surf_gbs':   'Surf_Concrete_Outer',
-    'surf_global':'Surf_Global_Environment'
+    'surf_global':'Surf_Global_Environment',
+
+    # --- Simulation (Job, Step, Monitoring) ---
+    'job_name':    'Job-GBS-Tower',       # Le nom du fichier calcul
+    'step_name':   'Step_BC',             # Le nom de l'étape de calcul
+    'set_monitor': 'Set_Monitor_Top'      # Le nom du point qu'on surveille
 }
 
 # =============================================================================
@@ -105,7 +112,27 @@ tower_part = geom.create_tower(mymodel, param_geom,names_dict)
 gbs_part = geom.create_fused_gbs(mymodel,param_geom,names_dict)
 
 # =============================================================================
-# Création de l'Assembly 
+# Application des matériaux
+# =============================================================================
+
+# 1. Application sur la Tour
+mat.create_and_assign_solid_material(model=mymodel,part=tower_part,mat_name='Steel_S355',props=props_steel)
+
+# 2. Application sur le GBS
+mat.create_and_assign_solid_material(model=mymodel,part=gbs_part,mat_name='Concrete_C50',props=props_concrete)
+
+#=============================================================================
+# Application  du Mesh
+# =============================================================================
+
+# 1. Application sur la Tour
+meshpart.MeshTower(tower_part,param_mesh['Tower'])
+
+# 2. Application sur le GBS
+meshpart.MeshGBS(gbs_part, param_mesh['GBS'])
+
+# =============================================================================
+# Création de l'Assemblage
 # =============================================================================
 
 h_gbs_top = param_geom['plateau_height'] + param_geom['cone_height'] + param_geom['cyl_height']
@@ -132,26 +159,12 @@ BC.create_tie_tower_gbs(mymodel, inst_tower, inst_gbs, h_gbs_top)
 
 BC.encastrement_GBS(mymodel,names_dict)
 
+
 # =============================================================================
-# Application des matériaux
+# Definition des points d'observation
 # =============================================================================
-
-# 1. Application sur la Tour
-mat.create_and_assign_solid_material(model=mymodel,part=tower_part,mat_name='Steel_S355',props=props_steel)
-
-# 2. Application sur le GBS
-mat.create_and_assign_solid_material(model=mymodel,part=gbs_part,mat_name='Concrete_C50',props=props_concrete)
-
-#=============================================================================
-# Application  du Mesh
-# =============================================================================
-
-# 1. Application sur la Tour
-meshpart.MeshTower(tower_part,param_mesh['Tower'])
-
-# 2. Application sur le GBS
-meshpart.MeshGBS(gbs_part, param_mesh['GBS'])
-
+h_total = h_gbs_top + param_geom['h_tower']
+geom.create_monitor_set(mymodel, names_dict, inst_tower, h_total)
 # =============================================================================
 # GESTION DES SURFACES (FUSION)
 # =============================================================================
@@ -169,94 +182,120 @@ geom.fus_outer_surfaces(mymodel, inst_gbs, inst_tower,names_dict)
 # On mettra la Magnitude à 1 plus bas pour que ces valeurs soient respectées telles quelles.
 
 # Scénario 1 : Force selon X (ex: Vent principal)
-# Format : (Temps s, Force N)
-data_force_x = (
+# =============================================================================
+# A. DÉFINITION DES SCÉNARIOS DE CHARGEMENT
+# =============================================================================
+print("\n--- Traitement des Données de Chargement ---")
+
+# Scénario 1 : Force Vent X (Données Brutes)
+# Note : Ici, j'ai mis 5000.0 N pour tester la normalisation automatique
+raw_force_x = (
     (0.0, 0.0),
-    (1.0, 2.0),  # Montée rapide à 2000 N
-    (2.0, 5.0),  # Pic à 5000 N
-    (3.0, 2.0),
-    (4.0, 0.0)      # Fin à 4s
+    (1.0, 2000.0), 
+    (2.0, 5000.0), # Pic à 5000 N
+    (3.0, 2000.0),
+    (4.0, 0.0)
 )
 
-# Scénario 2 : Force selon Z (ex: Courant latéral)
-# Profil différent : plus lent, moins fort, dure plus longtemps
-data_force_z = (
+# Scénario 2 : Force Vent Z (Données Brutes)
+raw_force_z = (
     (0.0, 0.0),
-    (2.5, 8.0),   # Pic décalé à 2.5s
-    (5.0, 0.0)      # Fin à 5s
+    (2.5, 8000.0), # Pic à 8000 N
+    (5.0, 0.0)
+)
+
+# --- Normalisation Automatique ---
+# On récupère : le profil (0-1), la magnitude (Newton) et la durée (s)
+data_x_norm, mag_x, time_x = force.process_load_data(raw_force_x)
+data_z_norm, mag_z, time_z = force.process_load_data(raw_force_z)
+
+# =============================================================================
+# B. CONFIGURATION TEMPORELLE (STEP)
+# =============================================================================
+
+# Calcul de la durée totale requise (le max des deux scénarios)
+total_sim_duration = max(time_x, time_z)
+
+# Appel de la fonction de configuration robuste
+force.configure_step_and_outputs(
+    model=mymodel, 
+    names=names_dict, 
+    total_time=total_sim_duration, 
+    target_frames=50
 )
 
 # =============================================================================
-# B. CONFIGURATION TEMPORELLE AUTOMATIQUE (STEP)
+# C. APPLICATION DES FORCES
 # =============================================================================
+print("\n--- Application des Chargements ---")
 
-# 1. Calcul de la durée totale requise
-# On regarde quel scénario finit le plus tard pour ne pas couper la simulation avant.
-max_time_x = data_force_x[-1][0]
-max_time_z = data_force_z[-1][0]
-total_duration = max(max_time_x, max_time_z)
-
-# 2. Réglage de la finesse du calcul (Incréments)
-target_frames = 50  # On veut ~50 points pour faire une belle courbe
-calc_inc = total_duration / target_frames
-
-print(f"Configuration Temps : Durée totale = {total_duration}s (Pilotée par le scénario le plus long)")
-
-# 3. Création / Mise à jour du Step
-if 'Step_BC' not in mymodel.steps:
-    mymodel.StaticStep(name='Step_BC', previous='Initial')
-
-mymodel.steps['Step_BC'].setValues(
-    timePeriod=total_duration,
-    initialInc=calc_inc,
-    maxInc=calc_inc,
-    minInc=1e-5
-)
-
-# Force la sauvegarde à chaque point calculé (pour l'animation)
-if 'F-Output-1' in mymodel.fieldOutputRequests:
-    mymodel.fieldOutputRequests['F-Output-1'].setValues(frequency=1)
-
-# =============================================================================
-# C. APPLICATION DES FORCES (X et Z)
-# =============================================================================
-
-# 1. Application Force X
-# Vecteur X : ((0,0,0), (1,0,0)) -> Pointe vers X positif
-# Dans main.py
-
-# ...
-
-# 1. Force du VENT (Au-dessus de l'eau)
-force.apply_tabular_surface_traction(
-    model=mymodel,
-    names=names_dict,                # Le dictionnaire contenant les noms
-    stepName='Step_BC',
-    data=data_force_x,
-    directionVector=((0,0,0), (1,0,0)), 
-    magnitude=1.0, 
-    h_cut=h_mer,
-    ampName='Amp_Vent_X',
-    mask_side='above',               # Spécifique au vent
-    surf_key='surf_global'           # On vise la surface fusionnée
-)
-
-# 2. Force du COURANT (En-dessous de l'eau)
+# 1. Force du VENT X
+# On passe 'data_x_norm' (profil) et 'mag_x' (intensité) calculés plus haut
 force.apply_tabular_surface_traction(
     model=mymodel,
     names=names_dict,
-    stepName='Step_BC',
-    data=data_force_z,
-    directionVector=((0,0,0), (0,0,1)),
-    magnitude=1.0, 
+    stepName=names_dict['step_name'],
+    data=data_x_norm,            # <--- Données normalisées
+    directionVector=((0,0,0), (1,0,0)), 
+    magnitude=mag_x,             # <--- Magnitude calculée (ex: 5000.0)
     h_cut=h_mer,
-    ampName='Amp_Courant_Z',
-    mask_side='above',               # Spécifique au courant
+    ampName='Amp_Vent_X',
+    mask_side='above',
     surf_key='surf_global'
 )
 
+# 2. Force du VENT Z
+force.apply_tabular_surface_traction(
+    model=mymodel,
+    names=names_dict,
+    stepName=names_dict['step_name'],
+    data=data_z_norm,            # <--- Données normalisées
+    directionVector=((0,0,0), (0,0,1)),
+    magnitude=mag_z,             # <--- Magnitude calculée (ex: 8000.0)
+    h_cut=h_mer,
+    ampName='Amp_Vent_Z',        # Nom plus cohérent
+    mask_side='above',
+    surf_key='surf_global'
+)
 # =============================================================================
-# CRÉATION ET LANCEMENT DU JOB
+# LANCEMENT ET POST-TRAITEMENT
 # =============================================================================
 
-jobb.lancement_job(mymodel)
+# 1. Lancement du Job
+# On passe juste le nom stocké dans le dictionnaire
+# (Assurez-vous que votre def_job.py accepte cet argument, voir note plus bas)
+my_job = jobb.lancement_job(mymodel, names_dict['job_name'])
+
+# 2. Attente de la fin du calcul (Sécurité indispensable)
+# Cela évite que le script de post-traitement ne se lance avant la fin du calcul
+try:
+    my_job.waitForCompletion()
+except Exception as e:
+    print(f"Calcul interrompu : {e}")
+
+# =============================================================================
+# POST-TRAITEMENT (CSV + IMAGE)
+# =============================================================================
+
+# 1. Définition des noms de fichiers
+odb_file = names_dict['job_name'] + '.odb'
+csv_file = names_dict['job_name'] + '_Resultats.csv'
+png_file = names_dict['job_name'] + '_Courbe.png'
+
+# 2. Génération du CSV (Données brutes)
+post.export_history_to_csv(
+    odb_name=odb_file,
+    step_name=names_dict['step_name'],   # 'Step_BC'
+    set_name=names_dict['set_monitor'],  # 'Set_Monitor_Top'
+    csv_filename=csv_file
+)
+
+# 3. Génération de l'Image (Visualisation)
+post.create_plot_from_csv(
+    csv_filename=csv_file,
+    image_filename=png_file
+)
+
+jobb.clean_abaqus_temp_files(names_dict['job_name'])
+
+print("\n--- FIN DU SCRIPT ---")

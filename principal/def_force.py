@@ -100,3 +100,76 @@ def apply_tabular_surface_traction(
     )
     
     print(f"-> Force appliquée avec succès : '{load_name}' sur '{real_surface_name}'.")
+
+def process_load_data(raw_data):
+    """
+    Analyse une série temporelle (Temps, Valeur).
+    - Trouve la durée totale.
+    - Normalise les valeurs entre -1 et 1 si elles dépassent 1.0.
+    - Calcule la magnitude correspondante.
+    
+    Returns:
+        tuple: (data_normalisee, magnitude_calculee, duree_max)
+    """
+    # 1. Extraction des valeurs pour analyse
+    values = [abs(point[1]) for point in raw_data]
+    times = [point[0] for point in raw_data]
+    
+    max_val = max(values) if values else 0.0
+    duration = max(times) if times else 0.0
+    
+    # 2. Logique de Normalisation
+    # Si la valeur max > 1, on normalise tout par rapport à ce max.
+    # Sinon, on garde tel quel (magnitude = 1.0).
+    if max_val > 1.0:
+        magnitude = max_val
+        # On divise chaque valeur par le max pour avoir un profil entre 0 et 1
+        norm_data = tuple((t, v / max_val) for t, v in raw_data)
+        print(f"   -> Données normalisées (Max initial: {max_val} -> Magnitude)")
+    else:
+        magnitude = 1.0
+        norm_data = raw_data
+        print(f"   -> Données conservées brutes (Max <= 1)")
+
+    return norm_data, magnitude, duration
+
+def configure_step_and_outputs(model, names, total_time, target_frames=50):
+    """
+    Configure ou met à jour le Step et les requêtes de sortie (Field/History).
+    """
+    step_name = names['step_name']
+    calc_inc = total_time / float(target_frames)
+    
+    print(f"\n--- Configuration du Step '{step_name}' ---")
+    print(f"   Durée: {total_time}s | Incrément: {calc_inc:.4f}s")
+
+    # 1. Création / Mise à jour Step
+    if step_name not in model.steps:
+        model.StaticStep(name=step_name, previous='Initial')
+
+    model.steps[step_name].setValues(
+        timePeriod=total_time,
+        initialInc=calc_inc,
+        maxInc=calc_inc,
+        minInc=1e-5
+    )
+
+    # 2. Field Output (Animation complète)
+    # On force la sauvegarde à chaque incrément calculé
+    if 'F-Output-1' in model.fieldOutputRequests:
+        model.fieldOutputRequests['F-Output-1'].setValues(frequency=1)
+
+    # 3. History Output (Monitoring précis)
+    # Suppression préventive pour éviter les doublons/erreurs
+    hist_name = 'H_Out_Top_Disp'
+    if hist_name in model.historyOutputRequests:
+        del model.historyOutputRequests[hist_name]
+
+    model.HistoryOutputRequest(
+        name=hist_name,
+        createStepName=step_name,
+        variables=('U', 'RF'),
+        region=model.rootAssembly.sets[names['set_monitor']],
+        frequency=1
+    )
+    print(f"   -> Sorties configurées (Field + History sur '{names['set_monitor']}')")

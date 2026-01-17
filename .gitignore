@@ -19,8 +19,9 @@ __pycache__/
 ## Ignorer les fichiers .rec
 *.rec
 
-## Ignorer les fichiers .png
+## Ignorer les fichiers .png et csv
 *.png 
+*.csv
 
 # C extensions
 *.so

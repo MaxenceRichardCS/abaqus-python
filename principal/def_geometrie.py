@@ -430,3 +430,57 @@ def fus_outer_surfaces(model, inst_gbs, inst_tower, names):
         operation=UNION
     )
     print(f"-> Surface globale '{surf_global_key}' créée avec succès.")
+
+# =============================================================================
+# Création des points de contrôle
+# =============================================================================
+
+def create_monitor_set(model, names, inst_tower, h_total):
+    """
+    Crée un Set (point de repère) au sommet de la tour pour suivre son déplacement.
+    Utilise le nom défini dans le dictionnaire 'names'.
+    
+    Args:
+        model : Le modèle Abaqus.
+        names (dict) : Le dictionnaire de configuration (doit contenir 'set_monitor').
+        inst_tower : L'objet Instance de la tour (pour chercher les arêtes).
+        h_total : La hauteur totale (Y) où se trouve le sommet.
+    """
+    print(f"\n--- Création du Set de Monitoring (Cible : Sommet à Y={h_total:.2f}m) ---")
+    a = model.rootAssembly
+    
+    # 1. Récupération du nom du Set
+    if 'set_monitor' not in names:
+        raise KeyError("Le dictionnaire 'names' ne contient pas la clé 'set_monitor'.")
+    
+    set_name = names['set_monitor']
+    
+    # 2. Nettoyage préventif
+    # Si le set existe déjà (ex: relance du script), on le supprime pour le recréer propre.
+    if set_name in a.sets:
+        del a.sets[set_name]
+
+    # 3. Sélection Géométrique Robuste (Bounding Box)
+    # Au lieu de chercher un point précis (risqué), on capture tout ce qui est
+    # dans une tranche très fine au sommet (+/- 1 cm).
+    try:
+        # On cherche les arêtes (Edges) du cercle supérieur
+        top_edges = inst_tower.edges.getByBoundingBox(
+            yMin=h_total - 0.01,  # 1 cm en dessous
+            yMax=h_total + 0.01,  # 1 cm au dessus
+            xMin=-500.0, xMax=500.0, # Large en X
+            zMin=-500.0, zMax=500.0  # Large en Z
+        )
+        
+        # Vérification qu'on a bien attrapé quelque chose
+        if len(top_edges) == 0:
+            print(f"ERREUR CRITIQUE : Aucune arête trouvée à l'altitude Y={h_total}m !")
+            print("Vérifiez la hauteur totale calculée dans main.py.")
+            return
+
+        # 4. Création du Set
+        a.Set(name=set_name, edges=top_edges)
+        print(f"-> Set '{set_name}' créé avec succès ({len(top_edges)} arêtes sélectionnées).")
+        
+    except Exception as e:
+        print(f"ERREUR lors de la création du Set de monitoring : {e}")
